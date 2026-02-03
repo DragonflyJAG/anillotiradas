@@ -21,6 +21,7 @@
             --color-suave-gris: #b8b8b8;
             --color-suave-azul: #a4c8f4;
             --color-dado-base: #8b0000; /* Color base de los dados */
+            --color-dado-exito: #8b7355; /* Color base de los dados de éxito */
         }
         
         * {
@@ -496,7 +497,7 @@
         .exito-dice-animated {
             width: 40px;
             height: 40px;
-            background: linear-gradient(135deg, var(--color-sepia) 0%, #7a6345 100%);
+            background: linear-gradient(135deg, var(--color-dado-exito) 0%, #7a6345 100%);
             border-radius: 8px;
             display: flex;
             align-items: center;
@@ -975,6 +976,65 @@
             font-weight: bold;
         }
         
+        /* Controles de número mejorados para móvil */
+        .number-controls {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+        
+        .number-input-wrapper {
+            display: flex;
+            align-items: center;
+            border: 2px solid var(--color-sepia);
+            border-radius: 6px;
+            overflow: hidden;
+            background: white;
+        }
+        
+        .number-control-btn {
+            background: var(--color-sepia);
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        
+        .number-control-btn:hover {
+            background: var(--color-rojo);
+        }
+        
+        .number-control-btn.decrease {
+            border-right: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .number-control-btn.increase {
+            border-left: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .number-control-input {
+            width: 50px;
+            text-align: center;
+            padding: 5px;
+            border: none;
+            font-size: 0.85rem;
+            font-weight: bold;
+            background: white;
+            color: var(--color-oscuro);
+        }
+        
+        .number-control-input:focus {
+            outline: none;
+            background: #f9f5eb;
+        }
+        
         .skills-editor {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -1091,6 +1151,17 @@
         .roll-content {
             scrollbar-width: thin;
             scrollbar-color: var(--color-sepia) rgba(139, 115, 85, 0.1);
+        }
+        
+        /* Ocultar flechas de número en navegadores de escritorio */
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        
+        input[type="number"] {
+            -moz-appearance: textfield;
         }
     </style>
 </head>
@@ -1274,7 +1345,8 @@
                 disadvantage: false,
                 extraHopeDice: 0 // Dados extra por usar esperanza
             },
-            diceColor: "#8b0000" // Color base de los dados
+            diceColor: "#8b0000", // Color base de los dados
+            diceExitoColor: "#8b7355" // Color base de los dados de éxito
         };
         
         // Variable para controlar si el nombre es el valor por defecto
@@ -1298,12 +1370,16 @@
             loadFromLocalStorage();
             renderGame();
             setupEventListeners();
-            applyDiceColor();
+            applyDiceColors();
         });
         
-        // Aplicar color de los dados
-        function applyDiceColor() {
+        // Aplicar colores de los dados
+        function applyDiceColors() {
+            // Aplicar color de los dados de proeza
             document.documentElement.style.setProperty('--color-dado-base', characterData.diceColor);
+            
+            // Aplicar color de los dados de éxito
+            document.documentElement.style.setProperty('--color-dado-exito', characterData.diceExitoColor);
             
             // Actualizar color de los dados de proeza existentes
             document.querySelectorAll('.proeza-dice-animated').forEach(dice => {
@@ -1311,6 +1387,44 @@
                     dice.style.background = `linear-gradient(135deg, ${characterData.diceColor} 0%, ${darkenColor(characterData.diceColor, 20)} 100%)`;
                 }
             });
+            
+            // Actualizar color de los dados de éxito existentes
+            document.querySelectorAll('.exito-dice-animated').forEach(dice => {
+                if (!dice.classList.contains('elfic') && !dice.classList.contains('zero')) {
+                    dice.style.background = `linear-gradient(135deg, ${characterData.diceExitoColor} 0%, ${darkenColor(characterData.diceExitoColor, 20)} 100%)`;
+                }
+            });
+        }
+        
+        // Generar color complementario para dados de éxito
+        function getComplementaryColor(baseColor) {
+            // Convertir hex a RGB
+            const hex = baseColor.replace('#', '');
+            const r = parseInt(hex.substring(0, 2), 16);
+            const g = parseInt(hex.substring(2, 4), 16);
+            const b = parseInt(hex.substring(4, 6), 16);
+            
+            // Generar color sepia/marrón a partir del color base
+            // Para colores rojizos, usar un marrón más cálido
+            if (r > 150 && g < 100 && b < 100) {
+                // Color rojo -> usar marrón cálido
+                return '#8b7355'; // Color sepia por defecto
+            } else if (r > 150 && g > 150 && b < 100) {
+                // Color amarillo/naranja -> usar marrón dorado
+                return '#a0522d'; // Siena tostada
+            } else if (r < 100 && g > 150 && b < 100) {
+                // Color verde -> usar marrón oliva
+                return '#6b8e23'; // Verde oliva
+            } else if (r < 100 && g < 100 && b > 150) {
+                // Color azul -> usar marrón pizarra
+                return '#696969'; // Gris oscuro
+            } else if (r > 150 && g < 100 && b > 150) {
+                // Color magenta -> usar marrón púrpura
+                return '#654321'; // Marrón oscuro
+            } else {
+                // Color por defecto para otros casos
+                return '#8b7355'; // Color sepia
+            }
         }
         
         // Oscurecer color para gradiente
@@ -1755,7 +1869,7 @@
         function getRandomProezaNumber() {
             const roll = Math.floor(Math.random() * 12) + 1;
             if (roll === 12) return 'ᚠ';
-            if (roll === 11) return '👁️‍🗨️';
+            if (roll === 11) return '👁️'; // Cambiado de 👁️‍🗨️ a 👁️
             return roll;
         }
         
@@ -1816,7 +1930,7 @@
                                 finalResultEl.textContent = 'ᚠ';
                                 dice.title = 'Runa de Gandalf';
                             } else if (roll.isSauron) {
-                                finalResultEl.textContent = '👁️‍🗨️';
+                                finalResultEl.textContent = '👁️'; // Cambiado de 👁️‍🗨️ a 👁️
                                 dice.title = 'Ojo de Sauron';
                             } else {
                                 finalResultEl.textContent = roll.value;
@@ -1839,6 +1953,11 @@
                     setTimeout(() => {
                         const dice = document.createElement('div');
                         dice.className = `exito-dice-animated rolling ${roll.isElfic ? 'elfic' : ''} ${roll.wearyZero ? 'zero' : ''}`;
+                        
+                        // Aplicar color personalizado si no es élfico ni zero
+                        if (!roll.isElfic && !roll.wearyZero) {
+                            dice.style.background = `linear-gradient(135deg, ${characterData.diceExitoColor} 0%, ${darkenColor(characterData.diceExitoColor, 20)} 100%)`;
+                        }
                         
                         // Añadir elemento para números aleatorios
                         const randomNumberEl = document.createElement('div');
@@ -1899,7 +2018,7 @@
                 
                 // Mostrar resumen de la suma - FORMATO MEJORADO
                 if (isSauron && characterData.states.miserable) {
-                    rollSummary.innerHTML = `<span style="color: #ff4444;">👁️‍🗨️ Ojo de Sauron + Desanimado</span>`;
+                    rollSummary.innerHTML = `<span style="color: #ff4444;">👁️ Ojo de Sauron + Desanimado</span>`;
                 } else if (isGandalf) {
                     rollSummary.innerHTML = `<span style="color: var(--color-dorado);">ᚠ Runa de Gandalf</span>`;
                 } else if (isSauron) {
@@ -2034,6 +2153,9 @@
                                 <input type="color" id="edit-dice-color" value="${characterData.diceColor}" class="color-picker">
                                 <span class="color-picker-value">${characterData.diceColor.toUpperCase()}</span>
                             </div>
+                            <div class="color-picker-container" style="margin-top: 8px;">
+                                <span class="color-picker-label">Los dados D6 usarán un color complementario automáticamente</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -2044,21 +2166,33 @@
                         <div class="attribute-box">
                             <h4>Fuerza</h4>
                             <div class="attribute-value">
-                                <input type="number" id="edit-strength" min="1" max="10" value="${characterData.attributes.strength}">
+                                <div class="number-input-wrapper">
+                                    <button class="number-control-btn decrease" data-target="edit-strength">−</button>
+                                    <input type="number" id="edit-strength" min="1" max="10" value="${characterData.attributes.strength}" class="number-control-input">
+                                    <button class="number-control-btn increase" data-target="edit-strength">+</button>
+                                </div>
                             </div>
                             <div class="attribute-no-editor">NO: ${20 - characterData.attributes.strength}</div>
                         </div>
                         <div class="attribute-box">
                             <h4>Corazón</h4>
                             <div class="attribute-value">
-                                <input type="number" id="edit-heart" min="1" max="10" value="${characterData.attributes.heart}">
+                                <div class="number-input-wrapper">
+                                    <button class="number-control-btn decrease" data-target="edit-heart">−</button>
+                                    <input type="number" id="edit-heart" min="1" max="10" value="${characterData.attributes.heart}" class="number-control-input">
+                                    <button class="number-control-btn increase" data-target="edit-heart">+</button>
+                                </div>
                             </div>
                             <div class="attribute-no-editor">NO: ${20 - characterData.attributes.heart}</div>
                         </div>
                         <div class="attribute-box">
                             <h4>Mente</h4>
                             <div class="attribute-value">
-                                <input type="number" id="edit-mind" min="1" max="10" value="${characterData.attributes.mind}">
+                                <div class="number-input-wrapper">
+                                    <button class="number-control-btn decrease" data-target="edit-mind">−</button>
+                                    <input type="number" id="edit-mind" min="1" max="10" value="${characterData.attributes.mind}" class="number-control-input">
+                                    <button class="number-control-btn increase" data-target="edit-mind">+</button>
+                                </div>
                             </div>
                             <div class="attribute-no-editor">NO: ${20 - characterData.attributes.mind}</div>
                         </div>
@@ -2080,7 +2214,11 @@
                             <span>${skill.name}</span>
                         </div>
                         <div class="skill-editor-value">
-                            <input type="number" min="0" max="6" value="${skill.rank}" data-skill="strength-${index}">
+                            <div class="number-input-wrapper">
+                                <button class="number-control-btn decrease" data-skill="strength-${index}">−</button>
+                                <input type="number" min="0" max="6" value="${skill.rank}" data-skill="strength-${index}" class="number-control-input">
+                                <button class="number-control-btn increase" data-skill="strength-${index}">+</button>
+                            </div>
                             <span>rango</span>
                         </div>
                     </div>
@@ -2097,7 +2235,11 @@
                             <span>${skill.name}</span>
                         </div>
                         <div class="skill-editor-value">
-                            <input type="number" min="0" max="6" value="${skill.rank}" data-skill="heart-${index}">
+                            <div class="number-input-wrapper">
+                                <button class="number-control-btn decrease" data-skill="heart-${index}">−</button>
+                                <input type="number" min="0" max="6" value="${skill.rank}" data-skill="heart-${index}" class="number-control-input">
+                                <button class="number-control-btn increase" data-skill="heart-${index}">+</button>
+                            </div>
                             <span>rango</span>
                         </div>
                     </div>
@@ -2114,7 +2256,11 @@
                             <span>${skill.name}</span>
                         </div>
                         <div class="skill-editor-value">
-                            <input type="number" min="0" max="6" value="${skill.rank}" data-skill="mind-${index}">
+                            <div class="number-input-wrapper">
+                                <button class="number-control-btn decrease" data-skill="mind-${index}">−</button>
+                                <input type="number" min="0" max="6" value="${skill.rank}" data-skill="mind-${index}" class="number-control-input">
+                                <button class="number-control-btn increase" data-skill="mind-${index}">+</button>
+                            </div>
                             <span>rango</span>
                         </div>
                     </div>
@@ -2139,7 +2285,11 @@
                             <span>${skill.name}</span>
                         </div>
                         <div class="skill-editor-value">
-                            <input type="number" min="0" max="6" value="${skill.rank}" data-combat="${index}">
+                            <div class="number-input-wrapper">
+                                <button class="number-control-btn decrease" data-combat="${index}">−</button>
+                                <input type="number" min="0" max="6" value="${skill.rank}" data-combat="${index}" class="number-control-input">
+                                <button class="number-control-btn increase" data-combat="${index}">+</button>
+                            </div>
                             <span>rango</span>
                         </div>
                     </div>
@@ -2165,20 +2315,87 @@
         
         // Configurar event listeners del editor
         function setupEditorListeners() {
-            // Actualizar NO cuando cambian atributos
-            document.getElementById('edit-strength').addEventListener('input', function() {
+            // Configurar botones de incremento/decremento para atributos
+            document.querySelectorAll('.number-control-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const targetId = this.getAttribute('data-target');
+                    const isDecrease = this.textContent === '−';
+                    const isIncrease = this.textContent === '+';
+                    
+                    // Atributos principales (strength, heart, mind)
+                    if (targetId && (targetId === 'edit-strength' || targetId === 'edit-heart' || targetId === 'edit-mind')) {
+                        const input = document.getElementById(targetId);
+                        let value = parseInt(input.value) || 5;
+                        
+                        if (isDecrease && value > 1) {
+                            value--;
+                        } else if (isIncrease && value < 10) {
+                            value++;
+                        }
+                        
+                        input.value = value;
+                        
+                        // Actualizar NO
+                        const no = 20 - value;
+                        const noElement = input.closest('.attribute-value').nextElementSibling;
+                        if (noElement && noElement.classList.contains('attribute-no-editor')) {
+                            noElement.textContent = `NO: ${no}`;
+                        }
+                    }
+                    
+                    // Habilidades (strength-0, heart-1, etc.)
+                    else if (this.hasAttribute('data-skill')) {
+                        const skillId = this.getAttribute('data-skill');
+                        const [attribute, index] = skillId.split('-');
+                        const input = document.querySelector(`input[data-skill="${skillId}"]`);
+                        
+                        if (input) {
+                            let value = parseInt(input.value) || 0;
+                            
+                            if (isDecrease && value > 0) {
+                                value--;
+                            } else if (isIncrease && value < 6) {
+                                value++;
+                            }
+                            
+                            input.value = value;
+                        }
+                    }
+                    
+                    // Habilidades de combate
+                    else if (this.hasAttribute('data-combat')) {
+                        const combatIndex = this.getAttribute('data-combat');
+                        const input = document.querySelector(`input[data-combat="${combatIndex}"]`);
+                        
+                        if (input) {
+                            let value = parseInt(input.value) || 0;
+                            
+                            if (isDecrease && value > 0) {
+                                value--;
+                            } else if (isIncrease && value < 6) {
+                                value++;
+                            }
+                            
+                            input.value = value;
+                        }
+                    }
+                });
+            });
+            
+            // También manejar cambios directos en los inputs
+            document.getElementById('edit-strength')?.addEventListener('input', function() {
                 const value = parseInt(this.value) || 5;
                 const no = 20 - value;
                 this.parentElement.nextElementSibling.textContent = `NO: ${no}`;
             });
             
-            document.getElementById('edit-heart').addEventListener('input', function() {
+            document.getElementById('edit-heart')?.addEventListener('input', function() {
                 const value = parseInt(this.value) || 5;
                 const no = 20 - value;
                 this.parentElement.nextElementSibling.textContent = `NO: ${no}`;
             });
             
-            document.getElementById('edit-mind').addEventListener('input', function() {
+            document.getElementById('edit-mind')?.addEventListener('input', function() {
                 const value = parseInt(this.value) || 5;
                 const no = 20 - value;
                 this.parentElement.nextElementSibling.textContent = `NO: ${no}`;
@@ -2198,7 +2415,7 @@
                 });
             });
             
-            // Color picker para dados
+            // Color picker para dados - actualizar ambos colores
             const colorPicker = document.getElementById('edit-dice-color');
             const colorValue = document.querySelector('.color-picker-value');
             
@@ -2208,14 +2425,20 @@
                     colorValue.textContent = color;
                     characterData.diceColor = color.toLowerCase();
                     
+                    // Generar color complementario para dados de éxito
+                    characterData.diceExitoColor = getComplementaryColor(characterData.diceColor);
+                    
                     // Vista previa en tiempo real
-                    applyDiceColor();
+                    applyDiceColors();
                 });
                 
                 colorPicker.addEventListener('change', function() {
                     const color = this.value.toUpperCase();
                     colorValue.textContent = color;
                     characterData.diceColor = color.toLowerCase();
+                    
+                    // Generar color complementario para dados de éxito
+                    characterData.diceExitoColor = getComplementaryColor(characterData.diceColor);
                 });
             }
             
@@ -2251,7 +2474,7 @@
             document.getElementById('cancel-edit').addEventListener('click', function() {
                 document.getElementById('editor-screen').classList.remove('active');
                 // Restaurar color original si se canceló
-                applyDiceColor();
+                applyDiceColors();
             });
         }
         
@@ -2279,8 +2502,8 @@
             document.querySelectorAll('input[data-skill]').forEach(input => {
                 const [attribute, index] = input.dataset.skill.split('-');
                 const value = parseInt(input.value) || 0;
-                const favoredBtn = input.parentElement.parentElement.querySelector('.favored-toggle');
-                const favored = favoredBtn.classList.contains('active');
+                const favoredBtn = input.parentElement.parentElement.parentElement.querySelector('.favored-toggle');
+                const favored = favoredBtn ? favoredBtn.classList.contains('active') : false;
                 
                 if (attribute === 'strength') {
                     skills.strength[index].rank = value;
@@ -2298,15 +2521,15 @@
             document.querySelectorAll('input[data-combat]').forEach(input => {
                 const index = parseInt(input.dataset.combat);
                 const value = parseInt(input.value) || 0;
-                const favoredBtn = input.parentElement.parentElement.querySelector('.favored-toggle');
-                const favored = favoredBtn.classList.contains('active');
+                const favoredBtn = input.parentElement.parentElement.parentElement.querySelector('.favored-toggle');
+                const favored = favoredBtn ? favoredBtn.classList.contains('active') : false;
                 
                 combatSkills[index].rank = value;
                 combatSkills[index].favored = favored;
             });
             
-            // Aplicar color de dados definitivo
-            applyDiceColor();
+            // Aplicar colores de dados definitivo
+            applyDiceColors();
             
             // Actualizar juego
             renderGame();
@@ -2373,6 +2596,11 @@
                     // Cargar estado del nombre
                     if (parsedData.isDefaultName !== undefined) {
                         isDefaultName = parsedData.isDefaultName;
+                    }
+                    
+                    // Generar color complementario para dados de éxito si no existe
+                    if (!characterData.diceExitoColor) {
+                        characterData.diceExitoColor = getComplementaryColor(characterData.diceColor);
                     }
                     
                 } catch (e) {
