@@ -1085,45 +1085,45 @@
     </div>
 
     <script>
-        // Datos del juego
+        // Datos del juego - TODAS LAS HABILIDADES EMPIEZAN EN 0 Y NO FAVORECIDAS
         const skills = {
             strength: [
-                {name: "Impresionar", rank: 2, favored: false},
-                {name: "Atletismo", rank: 1, favored: false},
-                {name: "Alerta", rank: 1, favored: false},
+                {name: "Impresionar", rank: 0, favored: false},
+                {name: "Atletismo", rank: 0, favored: false},
+                {name: "Alerta", rank: 0, favored: false},
                 {name: "Cazar", rank: 0, favored: false},
                 {name: "Cantar", rank: 0, favored: false},
-                {name: "Oficio", rank: 1, favored: false}
+                {name: "Oficio", rank: 0, favored: false}
             ],
             heart: [
-                {name: "Alentar", rank: 1, favored: false},
-                {name: "Viajar", rank: 2, favored: false},
-                {name: "Perspicacia", rank: 1, favored: false},
+                {name: "Alentar", rank: 0, favored: false},
+                {name: "Viajar", rank: 0, favored: false},
+                {name: "Perspicacia", rank: 0, favored: false},
                 {name: "Curar", rank: 0, favored: false},
-                {name: "Cortesía", rank: 1, favored: false},
-                {name: "Guerrear", rank: 1, favored: false}
+                {name: "Cortesía", rank: 0, favored: false},
+                {name: "Guerrear", rank: 0, favored: false}
             ],
             mind: [
-                {name: "Persuadir", rank: 1, favored: false},
-                {name: "Sigilo", rank: 1, favored: false},
-                {name: "Inspeccionar", rank: 2, favored: false},
-                {name: "Explorar", rank: 1, favored: false},
+                {name: "Persuadir", rank: 0, favored: false},
+                {name: "Sigilo", rank: 0, favored: false},
+                {name: "Inspeccionar", rank: 0, favored: false},
+                {name: "Explorar", rank: 0, favored: false},
                 {name: "Acertijos", rank: 0, favored: false},
-                {name: "Saber", rank: 1, favored: false}
+                {name: "Saber", rank: 0, favored: false}
             ]
         };
         
         const combatSkills = [
-            {name: "Arcos", rank: 2, favored: false},
-            {name: "Espadas", rank: 3, favored: true},
-            {name: "Hachas", rank: 1, favored: false},
-            {name: "Lanzas", rank: 1, favored: false}
+            {name: "Arcos", rank: 0, favored: false},
+            {name: "Espadas", rank: 0, favored: false},
+            {name: "Hachas", rank: 0, favored: false},
+            {name: "Lanzas", rank: 0, favored: false}
         ];
         
         // Estado de la aplicación
         let characterData = {
-            name: "Aragorn",
-            culture: "dunedain",
+            name: "Nuevo Personaje",
+            culture: "hombres",
             attributes: {
                 strength: 5,
                 heart: 5,
@@ -1656,79 +1656,93 @@
                 rollAnimationIntervals.push(randomInterval);
             });
             
-            // Crear dados de éxito con animaciones
-            exitoRolls.forEach((roll, index) => {
-                setTimeout(() => {
-                    const dice = document.createElement('div');
-                    dice.className = `exito-dice-animated rolling ${roll.isElfic ? 'elfic' : ''} ${roll.wearyZero ? 'zero' : ''}`;
-                    
-                    // Añadir elemento para números aleatorios
-                    const randomNumberEl = document.createElement('div');
-                    randomNumberEl.className = 'random-number';
-                    dice.appendChild(randomNumberEl);
-                    
-                    // Elemento para el resultado final
-                    const finalResultEl = document.createElement('div');
-                    dice.appendChild(finalResultEl);
-                    
-                    // Añadir al contenedor
-                    diceContainer.appendChild(dice);
-                    
-                    // Animación de números aleatorios
-                    let randomCount = 0;
-                    const randomInterval = setInterval(() => {
-                        randomNumberEl.textContent = getRandomExitoNumber();
-                        randomCount++;
+            // Crear dados de éxito con animaciones (solo si hay dados de éxito)
+            if (exitoRolls.length > 0) {
+                exitoRolls.forEach((roll, index) => {
+                    setTimeout(() => {
+                        const dice = document.createElement('div');
+                        dice.className = `exito-dice-animated rolling ${roll.isElfic ? 'elfic' : ''} ${roll.wearyZero ? 'zero' : ''}`;
                         
-                        // Detener después de 8 cambios (para D6)
-                        if (randomCount >= 8) {
-                            clearInterval(randomInterval);
+                        // Añadir elemento para números aleatorios
+                        const randomNumberEl = document.createElement('div');
+                        randomNumberEl.className = 'random-number';
+                        dice.appendChild(randomNumberEl);
+                        
+                        // Elemento para el resultado final
+                        const finalResultEl = document.createElement('div');
+                        dice.appendChild(finalResultEl);
+                        
+                        // Añadir al contenedor
+                        diceContainer.appendChild(dice);
+                        
+                        // Animación de números aleatorios
+                        let randomCount = 0;
+                        const randomInterval = setInterval(() => {
+                            randomNumberEl.textContent = getRandomExitoNumber();
+                            randomCount++;
                             
-                            // Mostrar resultado final
-                            setTimeout(() => {
-                                dice.classList.remove('rolling');
-                                randomNumberEl.style.display = 'none';
+                            // Detener después de 8 cambios (para D6)
+                            if (randomCount >= 8) {
+                                clearInterval(randomInterval);
                                 
-                                finalResultEl.textContent = roll.wearyZero ? '0' : roll.value;
-                                
-                                // Añadir símbolo élfico si es un 6
-                                if (roll.isElfic && roll.value === 6) {
-                                    const symbol = document.createElement('div');
-                                    symbol.className = 'elfic-symbol-minimal';
-                                    symbol.textContent = '𝕿';
-                                    symbol.title = 'Símbolo Élfico';
-                                    dice.appendChild(symbol);
-                                }
-                            }, 100);
-                        }
-                    }, 70); // Cambiar número cada 70ms
-                    
-                    rollAnimationIntervals.push(randomInterval);
-                }, (proezaRolls.length * 100) + (index * 150));
-            });
+                                // Mostrar resultado final
+                                setTimeout(() => {
+                                    dice.classList.remove('rolling');
+                                    randomNumberEl.style.display = 'none';
+                                    
+                                    finalResultEl.textContent = roll.wearyZero ? '0' : roll.value;
+                                    
+                                    // Añadir símbolo élfico si es un 6
+                                    if (roll.isElfic && roll.value === 6) {
+                                        const symbol = document.createElement('div');
+                                        symbol.className = 'elfic-symbol-minimal';
+                                        symbol.textContent = '𝕿';
+                                        symbol.title = 'Símbolo Élfico';
+                                        dice.appendChild(symbol);
+                                    }
+                                }, 100);
+                            }
+                        }, 70); // Cambiar número cada 70ms
+                        
+                        rollAnimationIntervals.push(randomInterval);
+                    }, (proezaRolls.length * 100) + (index * 150));
+                });
+            }
             
             // Mostrar resumen de la suma después de las animaciones
             const totalDelay = (proezaRolls.length * 100) + (exitoRolls.length * 150) + 1000;
             
             setTimeout(() => {
-                // Mostrar veredicto (MUY PEQUEÑO Y DISCRETO)
+                // Mostrar veredicto
                 resultVerdict.className = `result-verdict ${isSuccess ? 'result-success' : 'result-failure'}`;
                 resultVerdict.textContent = isSuccess ? 'Éxito' : 'Fracaso';
                 
-                // Mostrar resumen de la suma (FORMATO MEJORADO)
+                // Determinar si es una tirada simple (solo dado de proeza sin dados de éxito)
+                const isSimpleRoll = exitoRolls.length === 0;
+                
+                // Mostrar resumen de la suma - FORMATO MEJORADO
                 if (isSauron && characterData.states.miserable) {
                     rollSummary.innerHTML = `<span style="color: #ff4444;">👁️‍🗨️ Ojo de Sauron + Desanimado</span>`;
                 } else if (isGandalf) {
                     rollSummary.innerHTML = `<span style="color: var(--color-dorado);">ᚠ Runa de Gandalf</span>`;
                 } else if (isSauron) {
-                    rollSummary.textContent = `0 + ${exitoSum} = ${exitoSum} / NO: ${targetNumber}`;
+                    if (exitoRolls.length === 0) {
+                        rollSummary.textContent = `Ojo de Sauron`;
+                    } else {
+                        rollSummary.textContent = `0 + ${exitoSum} = ${exitoSum} / NO: ${targetNumber}`;
+                    }
                 } else {
-                    // Mostrar la suma de forma diferente dependiendo de si hay dados extra
-                    if (currentRoll.extraDice > 0) {
+                    // TIENDA SIMPLE: Solo dado de proeza sin dados de éxito
+                    if (isSimpleRoll) {
+                        rollSummary.textContent = `${proezaValue} / NO: ${targetNumber}`;
+                    } 
+                    // TIENDA CON DADOS EXTRA DE ESPERANZA
+                    else if (currentRoll.extraDice > 0) {
                         const diceBase = currentRoll.rank;
                         rollSummary.textContent = `${proezaValue} + ${exitoSum} (${diceBase}+${currentRoll.extraDice}d6) = ${total} / NO: ${targetNumber}`;
-                    } else {
-                        // Si solo hay dados base, mostrar solo la suma simple
+                    } 
+                    // TIENDA NORMAL CON DADOS DE ÉXITO
+                    else {
                         rollSummary.textContent = `${proezaValue} + ${exitoSum} = ${total} / NO: ${targetNumber}`;
                     }
                 }
@@ -1760,6 +1774,14 @@
                 if (characterData.states.weary && exitoRolls.some(r => r.wearyZero)) {
                     const detail = document.createElement('div');
                     detail.textContent = '💤 Cansado aplicado';
+                    detail.style.color = '#aaa';
+                    rollDetails.appendChild(detail);
+                }
+                
+                // Mostrar si es tirada simple
+                if (isSimpleRoll) {
+                    const detail = document.createElement('div');
+                    detail.textContent = '🎲 Tirada simple (solo proeza)';
                     detail.style.color = '#aaa';
                     rollDetails.appendChild(detail);
                 }
