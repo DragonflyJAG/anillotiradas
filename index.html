@@ -1163,6 +1163,16 @@
         input[type="number"] {
             -moz-appearance: textfield;
         }
+        
+        /* Clic fuera para cerrar pantalla de tirada */
+        .roll-screen-backdrop {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
     </style>
 </head>
 <body>
@@ -1249,6 +1259,7 @@
     <!-- PANTALLA DE TIRADA CON ANIMACIONES MEJORADAS -->
     <div class="roll-screen" id="roll-screen">
         <button class="close-roll-minimal" id="close-roll">×</button>
+        <div class="roll-screen-backdrop" id="roll-screen-backdrop"></div>
         
         <div class="roll-content">
             <div class="roll-result-main">
@@ -1378,8 +1389,8 @@
             // Aplicar color de los dados de proeza
             document.documentElement.style.setProperty('--color-dado-base', characterData.diceColor);
             
-            // Aplicar color de los dados de éxito
-            document.documentElement.style.setProperty('--color-dado-exito', characterData.diceExitoColor);
+            // Aplicar color de los dados de éxito (mismo que el base)
+            document.documentElement.style.setProperty('--color-dado-exito', characterData.diceColor);
             
             // Actualizar color de los dados de proeza existentes
             document.querySelectorAll('.proeza-dice-animated').forEach(dice => {
@@ -1391,40 +1402,9 @@
             // Actualizar color de los dados de éxito existentes
             document.querySelectorAll('.exito-dice-animated').forEach(dice => {
                 if (!dice.classList.contains('elfic') && !dice.classList.contains('zero')) {
-                    dice.style.background = `linear-gradient(135deg, ${characterData.diceExitoColor} 0%, ${darkenColor(characterData.diceExitoColor, 20)} 100%)`;
+                    dice.style.background = `linear-gradient(135deg, ${characterData.diceColor} 0%, ${darkenColor(characterData.diceColor, 20)} 100%)`;
                 }
             });
-        }
-        
-        // Generar color complementario para dados de éxito
-        function getComplementaryColor(baseColor) {
-            // Convertir hex a RGB
-            const hex = baseColor.replace('#', '');
-            const r = parseInt(hex.substring(0, 2), 16);
-            const g = parseInt(hex.substring(2, 4), 16);
-            const b = parseInt(hex.substring(4, 6), 16);
-            
-            // Generar color sepia/marrón a partir del color base
-            // Para colores rojizos, usar un marrón más cálido
-            if (r > 150 && g < 100 && b < 100) {
-                // Color rojo -> usar marrón cálido
-                return '#8b7355'; // Color sepia por defecto
-            } else if (r > 150 && g > 150 && b < 100) {
-                // Color amarillo/naranja -> usar marrón dorado
-                return '#a0522d'; // Siena tostada
-            } else if (r < 100 && g > 150 && b < 100) {
-                // Color verde -> usar marrón oliva
-                return '#6b8e23'; // Verde oliva
-            } else if (r < 100 && g < 100 && b > 150) {
-                // Color azul -> usar marrón pizarra
-                return '#696969'; // Gris oscuro
-            } else if (r > 150 && g < 100 && b > 150) {
-                // Color magenta -> usar marrón púrpura
-                return '#654321'; // Marrón oscuro
-            } else {
-                // Color por defecto para otros casos
-                return '#8b7355'; // Color sepia
-            }
         }
         
         // Oscurecer color para gradiente
@@ -1664,6 +1644,9 @@
             document.getElementById('close-roll').addEventListener('click', closeRollScreen);
             document.getElementById('back-from-roll').addEventListener('click', closeRollScreen);
             
+            // Clic fuera para cerrar pantalla de tirada
+            document.getElementById('roll-screen-backdrop').addEventListener('click', closeRollScreen);
+            
             document.getElementById('reroll-btn').addEventListener('click', function() {
                 if (currentRoll.skill) {
                     executeRoll();
@@ -1733,24 +1716,34 @@
         function executeRoll() {
             const targetNumber = 20 - characterData.attributes[currentRoll.attribute];
             
+            // REGLA ESPECIAL: Desventaja + Favorecida se anulan -> tirada normal de 1 dado
+            const isSpecialCase = characterData.rollModifiers.disadvantage && currentRoll.favored;
+            
             // Tirar dados de proeza
             let proezaRolls = [];
-            const proezaCount = currentRoll.favored ? 2 : 1;
+            let proezaCount = 1; // Por defecto 1 dado
+            
+            if (!isSpecialCase) {
+                // Caso normal: favorecida = 2 dados, ventaja = +1 dado
+                proezaCount = currentRoll.favored ? 2 : 1;
+                
+                if (characterData.rollModifiers.advantage && !currentRoll.favored) {
+                    proezaCount += 1;
+                } else if (characterData.rollModifiers.disadvantage && !currentRoll.favored) {
+                    proezaCount += 1;
+                }
+            }
             
             for (let i = 0; i < proezaCount; i++) {
                 proezaRolls.push(rollProezaDie());
             }
             
-            // Aplicar ventaja/desventaja
-            if (characterData.rollModifiers.advantage && !currentRoll.favored) {
-                proezaRolls.push(rollProezaDie());
-            } else if (characterData.rollModifiers.disadvantage && !currentRoll.favored) {
-                proezaRolls.push(rollProezaDie());
-            }
-            
             // Elegir resultado
             let proezaResult;
-            if (currentRoll.favored || characterData.rollModifiers.advantage) {
+            if (isSpecialCase) {
+                // Caso especial: desventaja + favorecida = 1 dado normal
+                proezaResult = proezaRolls[0];
+            } else if (currentRoll.favored || characterData.rollModifiers.advantage) {
                 // Tomar el MEJOR resultado
                 proezaResult = proezaRolls.reduce((best, current) => {
                     if (current.value === 12) return current;
@@ -1835,7 +1828,7 @@
             
             // Mostrar resultados con animaciones
             displayRollResultsWithAnimations(proezaResult, proezaRolls, exitoRolls, proezaValue, exitoSum, total, targetNumber, 
-                                           isSuccess, isGandalf, isSauron, elficSymbols);
+                                           isSuccess, isGandalf, isSauron, elficSymbols, isSpecialCase);
             
             // Resetear ventaja/desventaja después de la tirada
             characterData.rollModifiers.advantage = false;
@@ -1869,7 +1862,7 @@
         function getRandomProezaNumber() {
             const roll = Math.floor(Math.random() * 12) + 1;
             if (roll === 12) return 'ᚠ';
-            if (roll === 11) return '👁️'; // Cambiado de 👁️‍🗨️ a 👁️
+            if (roll === 11) return '👁️';
             return roll;
         }
         
@@ -1880,7 +1873,7 @@
         
         // Mostrar resultados con animaciones de números aleatorios
         function displayRollResultsWithAnimations(proezaResult, proezaRolls, exitoRolls, proezaValue, exitoSum, total, targetNumber, 
-                                                isSuccess, isGandalf, isSauron, elficSymbols) {
+                                                isSuccess, isGandalf, isSauron, elficSymbols, isSpecialCase = false) {
             const resultVerdict = document.getElementById('result-verdict');
             const rollSummary = document.getElementById('roll-summary');
             const diceContainer = document.getElementById('dice-container-minimal');
@@ -1930,7 +1923,7 @@
                                 finalResultEl.textContent = 'ᚠ';
                                 dice.title = 'Runa de Gandalf';
                             } else if (roll.isSauron) {
-                                finalResultEl.textContent = '👁️'; // Cambiado de 👁️‍🗨️ a 👁️
+                                finalResultEl.textContent = '👁️';
                                 dice.title = 'Ojo de Sauron';
                             } else {
                                 finalResultEl.textContent = roll.value;
@@ -1956,7 +1949,7 @@
                         
                         // Aplicar color personalizado si no es élfico ni zero
                         if (!roll.isElfic && !roll.wearyZero) {
-                            dice.style.background = `linear-gradient(135deg, ${characterData.diceExitoColor} 0%, ${darkenColor(characterData.diceExitoColor, 20)} 100%)`;
+                            dice.style.background = `linear-gradient(135deg, ${characterData.diceColor} 0%, ${darkenColor(characterData.diceColor, 20)} 100%)`;
                         }
                         
                         // Añadir elemento para números aleatorios
@@ -2028,16 +2021,23 @@
                         rollSummary.textContent = `0 + ${exitoSum} = ${exitoSum} / NO: ${targetNumber}`;
                     }
                 } else {
-                    // TIENDA SIMPLE: Solo dado de proeza sin dados de éxito
-                    if (isSimpleRoll) {
+                    // Caso especial: desventaja + favorecida
+                    if (isSpecialCase) {
+                        rollSummary.textContent = `${proezaValue} / NO: ${targetNumber}`;
+                        if (exitoRolls.length > 0) {
+                            rollSummary.textContent = `${proezaValue} + ${exitoSum} = ${total} / NO: ${targetNumber}`;
+                        }
+                    }
+                    // Tirada simple: Solo dado de proeza sin dados de éxito
+                    else if (isSimpleRoll) {
                         rollSummary.textContent = `${proezaValue} / NO: ${targetNumber}`;
                     } 
-                    // TIENDA CON DADOS EXTRA DE ESPERANZA
+                    // Tirada con dados extra de esperanza
                     else if (currentRoll.extraDice > 0) {
                         const diceBase = currentRoll.rank;
                         rollSummary.textContent = `${proezaValue} + ${exitoSum} (${diceBase}+${currentRoll.extraDice}d6) = ${total} / NO: ${targetNumber}`;
                     } 
-                    // TIENDA NORMAL CON DADOS DE ÉXITO
+                    // Tirada normal con dados de éxito
                     else {
                         rollSummary.textContent = `${proezaValue} + ${exitoSum} = ${total} / NO: ${targetNumber}`;
                     }
@@ -2045,6 +2045,14 @@
                 
                 // Mostrar detalles (SOLO si hay información relevante)
                 rollDetails.innerHTML = '';
+                
+                // Caso especial: desventaja + favorecida
+                if (isSpecialCase) {
+                    const detail = document.createElement('div');
+                    detail.textContent = '⚠️ Desventaja + Favorecida = Tirada normal';
+                    detail.style.color = '#ff9900';
+                    rollDetails.appendChild(detail);
+                }
                 
                 if (currentRoll.extraDice > 0) {
                     const detail = document.createElement('div');
@@ -2060,7 +2068,7 @@
                     rollDetails.appendChild(detail);
                 }
                 
-                if (currentRoll.favored) {
+                if (currentRoll.favored && !isSpecialCase) {
                     const detail = document.createElement('div');
                     detail.textContent = '★ Favorecida';
                     detail.style.color = 'var(--color-dorado)';
@@ -2075,7 +2083,7 @@
                 }
                 
                 // Mostrar si es tirada simple
-                if (isSimpleRoll) {
+                if (isSimpleRoll && !isSpecialCase) {
                     const detail = document.createElement('div');
                     detail.textContent = '🎲 Tirada simple (solo proeza)';
                     detail.style.color = '#aaa';
@@ -2154,7 +2162,7 @@
                                 <span class="color-picker-value">${characterData.diceColor.toUpperCase()}</span>
                             </div>
                             <div class="color-picker-container" style="margin-top: 8px;">
-                                <span class="color-picker-label">Los dados D6 usarán un color complementario automáticamente</span>
+                                <span class="color-picker-label">Los dados D6 usarán el mismo color que los D12</span>
                             </div>
                         </div>
                     </div>
@@ -2415,7 +2423,7 @@
                 });
             });
             
-            // Color picker para dados - actualizar ambos colores
+            // Color picker para dados - actualizar ambos colores al seleccionar
             const colorPicker = document.getElementById('edit-dice-color');
             const colorValue = document.querySelector('.color-picker-value');
             
@@ -2425,11 +2433,14 @@
                     colorValue.textContent = color;
                     characterData.diceColor = color.toLowerCase();
                     
-                    // Generar color complementario para dados de éxito
-                    characterData.diceExitoColor = getComplementaryColor(characterData.diceColor);
+                    // Los dados D6 usan el mismo color
+                    characterData.diceExitoColor = characterData.diceColor;
                     
                     // Vista previa en tiempo real
                     applyDiceColors();
+                    
+                    // Cerrar el selector de color automáticamente en móvil
+                    this.blur();
                 });
                 
                 colorPicker.addEventListener('change', function() {
@@ -2437,8 +2448,8 @@
                     colorValue.textContent = color;
                     characterData.diceColor = color.toLowerCase();
                     
-                    // Generar color complementario para dados de éxito
-                    characterData.diceExitoColor = getComplementaryColor(characterData.diceColor);
+                    // Los dados D6 usan el mismo color
+                    characterData.diceExitoColor = characterData.diceColor;
                 });
             }
             
@@ -2598,9 +2609,9 @@
                         isDefaultName = parsedData.isDefaultName;
                     }
                     
-                    // Generar color complementario para dados de éxito si no existe
+                    // Asegurar que los dados D6 usen el mismo color que los D12
                     if (!characterData.diceExitoColor) {
-                        characterData.diceExitoColor = getComplementaryColor(characterData.diceColor);
+                        characterData.diceExitoColor = characterData.diceColor;
                     }
                     
                 } catch (e) {
