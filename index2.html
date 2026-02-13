@@ -1,0 +1,2550 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>El Anillo Único - Ficha Móvil</title>
+    <style>
+        :root {
+            --color-crema: #f5f0e1;
+            --color-sepia: #8b7355;
+            --color-rojo: #8b0000;
+            --color-oscuro: #3c2f2f;
+            --color-dorado: #daa520;
+            --color-dorado-gandalf: #b8860b;
+            --color-verde-elfico: #2e8b57;
+            --color-fondo: #f9f5eb;
+            --color-exito: #2e8b57;
+            --color-fallo: #8b0000;
+            --color-azul: #4169e1;
+            --color-suave-verde: #a3d9a5;
+            --color-suave-rojo: #f4a4a4;
+            --color-suave-gris: #b8b8b8;
+            --color-suave-azul: #a4c8f4;
+            --color-dado-base: #309fa1;
+            --color-dado-exito: #309fa1;
+            
+            --color-fondo-roll: #2a2323;
+            --color-fondo-roll-elfico: #1a3a1a;
+            --color-fondo-roll-gandalf: #8b6b0b;
+            --color-fondo-roll-personalizado: #309fa1;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            background-color: var(--color-oscuro);
+            color: var(--color-crema);
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            position: fixed;
+        }
+        
+        .app-container {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--color-fondo);
+        }
+        
+        .main-content {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+            padding-bottom: 50px;
+        }
+        
+        .shared-scroll-container {
+            flex: 1;
+            display: flex;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        
+        .attributes-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--color-sepia);
+            min-width: 0;
+        }
+        
+        .attribute-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 6px;
+        }
+        
+        .attribute-header {
+            background-color: var(--color-rojo);
+            color: white;
+            padding: 6px;
+            text-align: center;
+            font-weight: bold;
+            border-radius: 6px 6px 0 0;
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .attribute-no {
+            background-color: var(--color-dorado);
+            color: var(--color-oscuro);
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            min-width: 50px;
+            text-align: center;
+        }
+        
+        .skills-list {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .skill-btn {
+            width: 100%;
+            padding: 8px 6px;
+            text-align: left;
+            background: white;
+            border: 1px solid var(--color-sepia);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--color-oscuro);
+            flex-shrink: 0;
+        }
+        
+        .skill-btn:hover {
+            background: var(--color-sepia);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .skill-name {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.75rem;
+        }
+        
+        .favored-icon {
+            color: var(--color-dorado);
+            font-size: 0.8rem;
+        }
+        
+        .skill-favored {
+            font-weight: bold !important;
+        }
+        
+        .skill-rank {
+            background: var(--color-rojo);
+            color: white;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+        
+        .combat-panel {
+            position: absolute;
+            top: 20px;
+            right: 10px;
+            background: white;
+            border: 2px solid var(--color-dorado);
+            border-radius: 10px;
+            padding: 15px;
+            z-index: 100;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 280px;
+            display: none;
+            animation: slideIn 0.2s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .combat-panel.active {
+            display: block;
+        }
+        
+        .combat-panel h3 {
+            color: var(--color-rojo);
+            margin-bottom: 15px;
+            text-align: center;
+            border-bottom: 2px solid var(--color-sepia);
+            padding-bottom: 8px;
+            font-size: 1.1rem;
+        }
+        
+        .floating-buttons {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 10px;
+            background: rgba(59, 47, 47, 0.95);
+            border-top: 2px solid var(--color-dorado);
+            z-index: 500;
+            gap: 6px;
+            flex-wrap: wrap;
+            height: 48px;
+        }
+        
+        .floating-btn {
+            padding: 6px 8px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            min-width: 0;
+            flex: 1;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+        
+        .floating-btn:hover {
+            transform: translateY(-1px);
+        }
+        
+        .floating-btn.editor {
+            background: linear-gradient(135deg, var(--color-azul) 0%, #2a4bc9 100%);
+            color: white;
+            flex: 0.8;
+        }
+        
+        .floating-btn.combat {
+            background: linear-gradient(135deg, var(--color-rojo) 0%, #a30000 100%);
+            color: white;
+            flex: 0.8;
+        }
+        
+        .floating-btn.hope {
+            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+            color: white;
+            flex: 1.2;
+        }
+        
+        .floating-btn.advantage {
+            background: linear-gradient(135deg, var(--color-suave-verde) 0%, #8bc89c 100%);
+            color: var(--color-oscuro);
+            flex: 1.2;
+        }
+        
+        .floating-btn.advantage.active {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+        }
+        
+        .floating-btn.disadvantage {
+            background: linear-gradient(135deg, var(--color-suave-rojo) 0%, #f0a0a0 100%);
+            color: var(--color-oscuro);
+            flex: 1.2;
+        }
+        
+        .floating-btn.disadvantage.active {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+        }
+        
+        .floating-btn.weary {
+            background: linear-gradient(135deg, var(--color-suave-gris) 0%, #d0d0d0 100%);
+            color: var(--color-oscuro);
+            flex: 1;
+        }
+        
+        .floating-btn.weary.active {
+            background: linear-gradient(135deg, #5a5a5a 0%, #3a3a3a 100%);
+            color: white;
+        }
+        
+        .floating-btn.miserable {
+            background: linear-gradient(135deg, var(--color-suave-azul) 0%, #b8d4e8 100%);
+            color: var(--color-oscuro);
+            flex: 1;
+        }
+        
+        .floating-btn.miserable.active {
+            background: linear-gradient(135deg, #2c4f4f 0%, #1a3a3a 100%);
+            color: white;
+        }
+        
+        .floating-btn.active {
+            box-shadow: 0 0 0 2px var(--color-dorado), 0 1px 3px rgba(0, 0, 0, 0.2);
+            transform: translateY(-1px);
+        }
+        
+        /* PANTALLA DE TIRADA - COLOR DE FONDO DINÁMICO */
+        .roll-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, var(--color-fondo-roll) 0%, #1a1a1a 100%);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 15px;
+            display: none;
+            overflow-y: auto;
+            overflow-x: hidden;
+            transition: background 0.5s ease;
+        }
+        
+        .roll-screen.active {
+            display: flex;
+        }
+        
+        .roll-screen.elfic-background {
+            background: linear-gradient(135deg, var(--color-fondo-roll-elfico) 0%, #0e2a0e 100%);
+        }
+        
+        .roll-screen.gandalf-background {
+            background: linear-gradient(135deg, var(--color-fondo-roll-gandalf) 0%, #5e4a0a 100%);
+        }
+        
+        .roll-screen.custom-background {
+            background: linear-gradient(135deg, var(--color-fondo-roll-personalizado) 0%, #1f6b6d 100%);
+        }
+        
+        .roll-content {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 5px;
+            margin: 0 auto;
+            flex: 1;
+            overflow-y: auto;
+            padding: 5px;
+        }
+        
+        .roll-result-main {
+            text-align: center;
+            width: 100%;
+            flex-shrink: 0;
+            min-height: 70px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            margin-top: 0;
+        }
+        
+        .roll-skill-name {
+            font-size: 1.2rem;
+            color: var(--color-crema);
+            margin-bottom: 2px;
+            font-weight: bold;
+            word-wrap: break-word;
+            padding: 0 5px;
+            flex-shrink: 0;
+        }
+        
+        /* RESULTADO ÉXITO/FRACASO - ESPACIO RESERVADO SIEMPRE */
+        .result-verdict {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: transparent;
+            text-shadow: none;
+            letter-spacing: 2px;
+            min-height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+            flex-shrink: 0;
+            line-height: 1;
+        }
+        
+        .result-verdict.visible {
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            animation: pulseVerdict 0.8s ease-in-out;
+        }
+        
+        .result-success.visible {
+            color: var(--color-exito);
+        }
+        
+        .result-failure.visible {
+            color: var(--color-fallo);
+        }
+        
+        @keyframes pulseVerdict {
+            0% { opacity: 0.7; transform: scale(0.95); }
+            50% { opacity: 1; transform: scale(1.05); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        
+        .roll-info-minimal {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 12px;
+            width: 100%;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            flex-shrink: 0;
+            margin-bottom: 5px;
+        }
+        
+        /* RESULTADO DE SUMA - SOLO EL RESULTADO TOTAL MÁS GRANDE */
+        .roll-summary {
+            font-size: 1.4rem;
+            color: var(--color-crema);
+            margin-bottom: 8px;
+            font-weight: bold;
+            min-height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            word-wrap: break-word;
+            line-height: 1.3;
+            padding: 10px 5px;
+        }
+        
+        .roll-summary .total-result {
+            font-size: 2.2rem;
+            font-weight: 900;
+            margin: 0 5px;
+            color: var(--color-dorado);
+            text-shadow: 0 0 10px rgba(218, 165, 32, 0.5);
+        }
+        
+        .roll-details {
+            font-size: 0.8rem;
+            color: var(--color-dorado);
+            margin-top: 8px;
+            font-style: italic;
+            min-height: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+        
+        .dice-container-minimal {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            margin: 10px 0;
+            flex-wrap: wrap;
+            flex-shrink: 0;
+        }
+        
+        /* DADOS MÁS GRANDES */
+        .proeza-dice-animated {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--color-dado-base) 0%, #21797a 100%);
+            clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        
+        .proeza-dice-animated.rolling {
+            animation: rollPentagon 0.8s ease-out;
+        }
+        
+        @keyframes rollPentagon {
+            0% { transform: rotate(0deg) scale(1); }
+            25% { transform: rotate(90deg) scale(1.05); }
+            50% { transform: rotate(180deg) scale(1); }
+            75% { transform: rotate(270deg) scale(1.05); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+        
+        .proeza-dice-animated.gandalf {
+            background: linear-gradient(135deg, var(--color-dorado-gandalf) 0%, #8b6b0b 100%);
+            color: var(--color-oscuro);
+            border-color: rgba(184, 134, 11, 0.5);
+            box-shadow: 0 0 20px rgba(184, 134, 11, 0.8);
+            animation: glowGandalf 2s infinite alternate;
+        }
+        
+        @keyframes glowGandalf {
+            from { box-shadow: 0 0 15px rgba(184, 134, 11, 0.6); }
+            to { box-shadow: 0 0 30px rgba(184, 134, 11, 1); }
+        }
+        
+        .proeza-dice-animated.sauron {
+            background: linear-gradient(135deg, var(--color-oscuro) 0%, #1a1a1a 100%);
+            color: white;
+            border-color: rgba(139, 0, 0, 0.5);
+        }
+        
+        .proeza-dice-animated.selected {
+            box-shadow: 0 0 0 3px var(--color-dorado), 0 0 20px rgba(218, 165, 32, 0.8);
+        }
+        
+        .random-number {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            font-weight: bold;
+            opacity: 0;
+            animation: randomFlash 0.1s infinite alternate;
+        }
+        
+        @keyframes randomFlash {
+            0% { opacity: 0.8; }
+            100% { opacity: 1; }
+        }
+        
+        .exito-dice-animated {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--color-dado-exito) 0%, #21797a 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: white;
+            position: relative;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            overflow: hidden;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .exito-dice-animated.rolling {
+            animation: rollCube 0.6s ease-out;
+        }
+        
+        @keyframes rollCube {
+            0% { transform: rotateX(0) rotateY(0) rotateZ(0); }
+            25% { transform: rotateX(90deg) rotateY(45deg) rotateZ(45deg); }
+            50% { transform: rotateX(180deg) rotateY(90deg) rotateZ(90deg); }
+            75% { transform: rotateX(270deg) rotateY(135deg) rotateZ(135deg); }
+            100% { transform: rotateX(360deg) rotateY(180deg) rotateZ(180deg); }
+        }
+        
+        .exito-dice-animated.elfic {
+            background: linear-gradient(135deg, var(--color-verde-elfico) 0%, #1d6b3a 100%);
+            color: white;
+            border-color: var(--color-dorado);
+            box-shadow: 0 0 15px rgba(46, 139, 86, 0.7);
+        }
+        
+        .exito-dice-animated.zero {
+            background: linear-gradient(135deg, #aaa 0%, #888 100%);
+            color: #666;
+        }
+        
+        .elfic-symbol-minimal {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            font-size: 0.8rem;
+            color: var(--color-dorado);
+            font-weight: bold;
+        }
+        
+        .action-buttons-minimal {
+            display: flex;
+            gap: 8px;
+            margin-top: 5px;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+            flex-shrink: 0;
+        }
+        
+        .action-btn-minimal {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.85rem;
+            min-width: 100px;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+            flex: 1;
+            max-width: 140px;
+        }
+        
+        .action-btn-minimal:hover {
+            transform: translateY(-2px);
+        }
+        
+        .roll-again-btn {
+            background: linear-gradient(135deg, var(--color-rojo) 0%, #a30000 100%);
+            color: white;
+        }
+        
+        .back-btn-minimal {
+            background: linear-gradient(135deg, var(--color-sepia) 0%, #7a6345 100%);
+            color: white;
+        }
+        
+        .close-roll-minimal {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 1100;
+            flex-shrink: 0;
+        }
+        
+        .close-roll-minimal:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        @media (orientation: landscape) {
+            .main-content {
+                height: calc(100vh - 48px);
+                padding-bottom: 48px;
+            }
+            
+            .shared-scroll-container {
+                max-height: 100%;
+            }
+            
+            .attribute-column {
+                padding: 4px;
+            }
+            
+            .skill-btn {
+                padding: 6px 4px;
+                font-size: 0.7rem;
+                border-radius: 4px;
+            }
+            
+            .skill-rank {
+                width: 20px;
+                height: 20px;
+                font-size: 0.7rem;
+            }
+            
+            .attribute-header {
+                padding: 4px;
+                font-size: 0.75rem;
+                margin-bottom: 4px;
+            }
+            
+            .attribute-no {
+                font-size: 0.7rem;
+                min-width: 45px;
+                padding: 1px 4px;
+            }
+            
+            .favored-icon {
+                font-size: 0.7rem;
+            }
+            
+            .floating-buttons {
+                padding: 4px 6px;
+                gap: 4px;
+                height: 48px;
+            }
+            
+            .floating-btn {
+                padding: 4px 6px;
+                font-size: 0.7rem;
+                gap: 2px;
+            }
+            
+            .roll-screen {
+                padding: 10px;
+            }
+            
+            .roll-content {
+                padding: 5px;
+            }
+            
+            .roll-skill-name {
+                font-size: 1.1rem;
+                margin-bottom: 2px;
+            }
+            
+            .result-verdict {
+                font-size: 1.6rem;
+                min-height: 40px;
+            }
+            
+            .roll-info-minimal {
+                padding: 10px;
+                margin-bottom: 5px;
+            }
+            
+            .roll-summary {
+                font-size: 1.2rem;
+                min-height: 40px;
+            }
+            
+            .roll-summary .total-result {
+                font-size: 2rem;
+            }
+            
+            .proeza-dice-animated {
+                width: 70px;
+                height: 70px;
+                font-size: 2rem;
+            }
+            
+            .exito-dice-animated {
+                width: 50px;
+                height: 50px;
+                font-size: 1.6rem;
+            }
+            
+            .action-btn-minimal {
+                padding: 6px 10px;
+                min-width: 90px;
+                font-size: 0.8rem;
+            }
+            
+            .dice-container-minimal {
+                gap: 10px;
+                margin: 8px 0;
+            }
+        }
+        
+        @media (max-height: 500px) {
+            .main-content {
+                padding-bottom: 48px;
+            }
+            
+            .attribute-column {
+                padding: 3px;
+            }
+            
+            .skill-btn {
+                padding: 5px 3px;
+                font-size: 0.65rem;
+            }
+            
+            .skill-rank {
+                width: 18px;
+                height: 18px;
+                font-size: 0.65rem;
+            }
+            
+            .attribute-header {
+                padding: 3px;
+                font-size: 0.7rem;
+                margin-bottom: 3px;
+            }
+            
+            .attribute-no {
+                font-size: 0.65rem;
+                min-width: 40px;
+            }
+            
+            .floating-buttons {
+                height: 42px;
+                padding: 4px 5px;
+            }
+            
+            .floating-btn {
+                padding: 3px 5px;
+                font-size: 0.65rem;
+            }
+            
+            .roll-content {
+                padding: 3px;
+                gap: 3px;
+            }
+            
+            .roll-skill-name {
+                font-size: 1rem;
+                margin-bottom: 2px;
+            }
+            
+            .result-verdict {
+                font-size: 1.4rem;
+                min-height: 35px;
+            }
+            
+            .roll-info-minimal {
+                padding: 8px;
+            }
+            
+            .roll-summary {
+                font-size: 1.1rem;
+                min-height: 35px;
+            }
+            
+            .roll-summary .total-result {
+                font-size: 1.8rem;
+            }
+            
+            .proeza-dice-animated {
+                width: 60px;
+                height: 60px;
+                font-size: 1.8rem;
+            }
+            
+            .exito-dice-animated {
+                width: 40px;
+                height: 40px;
+                font-size: 1.4rem;
+            }
+            
+            .action-btn-minimal {
+                padding: 5px 8px;
+                min-width: 80px;
+                font-size: 0.75rem;
+            }
+        }
+        
+        .editor-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, var(--color-fondo) 0%, #e8dfc8 100%);
+            z-index: 2000;
+            padding: 15px;
+            padding-bottom: 80px;
+            overflow-y: auto;
+            display: none;
+        }
+        
+        .editor-screen.active {
+            display: block;
+        }
+        
+        .editor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--color-sepia);
+        }
+        
+        .editor-title {
+            color: var(--color-rojo);
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+        
+        .close-editor {
+            background: linear-gradient(135deg, var(--color-rojo) 0%, #a30000 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        .editor-content {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            padding-bottom: 70px;
+            border: 2px solid var(--color-sepia);
+            color: var(--color-oscuro);
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
+        }
+        
+        .editor-section {
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--color-sepia);
+        }
+        
+        .editor-section h3 {
+            color: var(--color-rojo);
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+        }
+        
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .form-group {
+            flex: 1;
+            min-width: 160px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: var(--color-oscuro);
+            font-size: 0.85rem;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 2px solid var(--color-sepia);
+            border-radius: 6px;
+            font-size: 0.85rem;
+            background-color: white;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--color-dorado);
+        }
+        
+        .color-picker-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 8px;
+        }
+        
+        .color-picker-label {
+            font-size: 0.85rem;
+            color: var(--color-oscuro);
+            font-weight: normal;
+        }
+        
+        .color-picker {
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--color-sepia);
+            border-radius: 6px;
+            cursor: pointer;
+            background-color: var(--color-dado-base);
+        }
+        
+        .color-picker-value {
+            font-size: 0.8rem;
+            color: var(--color-oscuro);
+            background: #f0f0f0;
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        
+        .attribute-editor {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .attribute-box {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            border: 2px solid var(--color-sepia);
+            text-align: center;
+        }
+        
+        .attribute-box h4 {
+            color: var(--color-rojo);
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+        
+        .attribute-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--color-rojo);
+            margin: 8px 0;
+        }
+        
+        .attribute-value input {
+            width: 60px;
+            text-align: center;
+            font-size: 1.6rem;
+            border: 2px solid var(--color-sepia);
+            border-radius: 6px;
+            padding: 6px;
+        }
+        
+        .attribute-no-editor {
+            font-size: 1rem;
+            color: var(--color-verde-elfico);
+            font-weight: bold;
+        }
+        
+        .number-controls {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+        
+        .number-input-wrapper {
+            display: flex;
+            align-items: center;
+            border: 2px solid var(--color-sepia);
+            border-radius: 6px;
+            overflow: hidden;
+            background: white;
+        }
+        
+        .number-control-btn {
+            background: var(--color-sepia);
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        
+        .number-control-btn:hover {
+            background: var(--color-rojo);
+        }
+        
+        .number-control-btn.decrease {
+            border-right: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .number-control-btn.increase {
+            border-left: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .number-control-input {
+            width: 50px;
+            text-align: center;
+            padding: 5px;
+            border: none;
+            font-size: 0.85rem;
+            font-weight: bold;
+            background: white;
+            color: var(--color-oscuro);
+        }
+        
+        .number-control-input:focus {
+            outline: none;
+            background: #f9f5eb;
+        }
+        
+        .skills-editor {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .skill-editor-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 10px;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid var(--color-sepia);
+        }
+        
+        .skill-editor-name {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+        
+        .favored-toggle {
+            background: none;
+            border: 2px solid var(--color-sepia);
+            color: var(--color-sepia);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .favored-toggle.active {
+            background-color: var(--color-dorado);
+            color: var(--color-oscuro);
+            border-color: var(--color-dorado);
+        }
+        
+        .skill-editor-value {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .skill-editor-value input {
+            width: 45px;
+            text-align: center;
+            padding: 5px;
+            border: 2px solid var(--color-sepia);
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+        
+        /* EDITOR ACTIONS - SIEMPRE VISIBLES EN LA PARTE INFERIOR */
+        .editor-actions {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            padding: 15px;
+            background: linear-gradient(to top, rgba(249, 245, 235, 0.95), rgba(249, 245, 235, 0.98));
+            border-top: 3px solid var(--color-dorado);
+            z-index: 2100;
+            box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .save-btn {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, var(--color-verde-elfico) 0%, #1d6b3a 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            flex: 1;
+            max-width: 200px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .cancel-btn {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, var(--color-sepia) 0%, #7a6345 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            flex: 1;
+            max-width: 200px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .shared-scroll-container::-webkit-scrollbar,
+        .editor-content::-webkit-scrollbar,
+        .roll-content::-webkit-scrollbar {
+            width: 5px;
+        }
+        
+        .shared-scroll-container::-webkit-scrollbar-track,
+        .editor-content::-webkit-scrollbar-track,
+        .roll-content::-webkit-scrollbar-track {
+            background: rgba(139, 115, 85, 0.1);
+            border-radius: 2px;
+        }
+        
+        .shared-scroll-container::-webkit-scrollbar-thumb,
+        .editor-content::-webkit-scrollbar-thumb,
+        .roll-content::-webkit-scrollbar-thumb {
+            background: var(--color-sepia);
+            border-radius: 2px;
+        }
+        
+        .shared-scroll-container,
+        .editor-content,
+        .roll-content {
+            scrollbar-width: thin;
+            scrollbar-color: var(--color-sepia) rgba(139, 115, 85, 0.1);
+        }
+        
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+        
+        .roll-screen-backdrop {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="main-content">
+            <div class="shared-scroll-container">
+                <div class="attributes-panel">
+                    <div class="attribute-header">
+                        <span>FUERZA</span>
+                        <div class="attribute-no" id="strength-no">NO: 15</div>
+                    </div>
+                    <div class="attribute-column">
+                        <div class="skills-list" id="strength-skills">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="attributes-panel">
+                    <div class="attribute-header">
+                        <span>CORAZÓN</span>
+                        <div class="attribute-no" id="heart-no">NO: 15</div>
+                    </div>
+                    <div class="attribute-column">
+                        <div class="skills-list" id="heart-skills">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="attributes-panel">
+                    <div class="attribute-header">
+                        <span>MENTE</span>
+                        <div class="attribute-no" id="mind-no">NO: 15</div>
+                    </div>
+                    <div class="attribute-column">
+                        <div class="skills-list" id="mind-skills">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="combat-panel" id="combat-panel">
+            <h3>Competencias de Combate</h3>
+            <div id="combat-skills">
+            </div>
+        </div>
+        
+        <div class="floating-buttons">
+            <button class="floating-btn disadvantage" id="disadvantage-btn">
+                Desventaja
+            </button>
+            <button class="floating-btn advantage" id="advantage-btn">
+                Ventaja
+            </button>
+            <button class="floating-btn hope" id="hope-btn">
+                +1 🎲
+            </button>
+            <button class="floating-btn weary" id="weary-btn">
+                🥱
+            </button>
+            <button class="floating-btn miserable" id="miserable-btn">
+                😔
+            </button>
+            <button class="floating-btn combat" id="combat-btn">
+                ⚔️
+            </button>
+            <button class="floating-btn editor" id="editor-btn">
+                ✎
+            </button>
+        </div>
+    </div>
+    
+    <div class="roll-screen" id="roll-screen">
+        <button class="close-roll-minimal" id="close-roll">×</button>
+        <div class="roll-screen-backdrop" id="roll-screen-backdrop"></div>
+        
+        <div class="roll-content">
+            <div class="roll-result-main">
+                <div class="roll-skill-name" id="roll-skill-name">Habilidad</div>
+                <div class="result-verdict" id="result-verdict"></div>
+            </div>
+            
+            <div class="roll-info-minimal">
+                <div class="roll-summary" id="roll-summary"></div>
+                <div class="dice-container-minimal" id="dice-container-minimal"></div>
+                <div class="roll-details" id="roll-details"></div>
+            </div>
+            
+            <div class="action-buttons-minimal">
+                <button class="action-btn-minimal roll-again-btn" id="reroll-btn">Tirar Otra Vez</button>
+                <button class="action-btn-minimal back-btn-minimal" id="back-from-roll">Volver</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="editor-screen" id="editor-screen">
+        <div class="editor-header">
+            <div class="editor-title">Editor de Personaje</div>
+            <button class="close-editor" id="close-editor">×</button>
+        </div>
+        
+        <div class="editor-content" id="editor-content">
+        </div>
+        
+        <div class="editor-actions">
+            <button class="cancel-btn" id="cancel-edit">Cancelar</button>
+            <button class="save-btn" id="save-edit">Guardar Cambios</button>
+        </div>
+    </div>
+
+    <script>
+        const skills = {
+            strength: [
+                {name: "Impresionar", rank: 0, favored: false},
+                {name: "Atletismo", rank: 0, favored: false},
+                {name: "Alerta", rank: 0, favored: false},
+                {name: "Cazar", rank: 0, favored: false},
+                {name: "Cantar", rank: 0, favored: false},
+                {name: "Oficio", rank: 0, favored: false}
+            ],
+            heart: [
+                {name: "Alentar", rank: 0, favored: false},
+                {name: "Viajar", rank: 0, favored: false},
+                {name: "Perspicacia", rank: 0, favored: false},
+                {name: "Curar", rank: 0, favored: false},
+                {name: "Cortesía", rank: 0, favored: false},
+                {name: "Guerrear", rank: 0, favored: false}
+            ],
+            mind: [
+                {name: "Persuadir", rank: 0, favored: false},
+                {name: "Sigilo", rank: 0, favored: false},
+                {name: "Inspeccionar", rank: 0, favored: false},
+                {name: "Explorar", rank: 0, favored: false},
+                {name: "Acertijos", rank: 0, favored: false},
+                {name: "Saber", rank: 0, favored: false}
+            ]
+        };
+        
+        const combatSkills = [
+            {name: "Arcos", rank: 0, favored: false},
+            {name: "Espadas", rank: 0, favored: false},
+            {name: "Hachas", rank: 0, favored: false},
+            {name: "Lanzas", rank: 0, favored: false},
+            {name: "Protección", rank: 0, favored: false}
+        ];
+        
+        let characterData = {
+            name: "Nuevo Personaje",
+            culture: "hombres",
+            attributes: {
+                strength: 5,
+                heart: 5,
+                mind: 5
+            },
+            states: {
+                weary: false,
+                miserable: false,
+                wounded: false,
+                inspired: false
+            },
+            rollModifiers: {
+                advantage: false,
+                disadvantage: false,
+                extraHopeDice: 0
+            },
+            diceColor: "#309fa1",
+            diceExitoColor: "#309fa1"
+        };
+        
+        let isDefaultName = true;
+        
+        let currentRoll = {
+            skill: null,
+            attribute: null,
+            type: null,
+            rank: 0,
+            favored: false,
+            extraDice: 0
+        };
+        
+        let rollAnimationIntervals = [];
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            loadFromLocalStorage();
+            renderGame();
+            setupEventListeners();
+            applyDiceColors();
+        });
+        
+        function applyDiceColors() {
+            document.documentElement.style.setProperty('--color-dado-base', characterData.diceColor);
+            document.documentElement.style.setProperty('--color-dado-exito', characterData.diceColor);
+            document.documentElement.style.setProperty('--color-fondo-roll-personalizado', characterData.diceColor);
+            
+            document.querySelectorAll('.proeza-dice-animated').forEach(dice => {
+                if (!dice.classList.contains('gandalf') && !dice.classList.contains('sauron')) {
+                    dice.style.background = `linear-gradient(135deg, ${characterData.diceColor} 0%, ${darkenColor(characterData.diceColor, 20)} 100%)`;
+                }
+            });
+            
+            document.querySelectorAll('.exito-dice-animated').forEach(dice => {
+                if (!dice.classList.contains('elfic') && !dice.classList.contains('zero')) {
+                    dice.style.background = `linear-gradient(135deg, ${characterData.diceColor} 0%, ${darkenColor(characterData.diceColor, 20)} 100%)`;
+                }
+            });
+        }
+        
+        function darkenColor(color, percent) {
+            const num = parseInt(color.replace("#", ""), 16);
+            const amt = Math.round(2.55 * percent);
+            const R = (num >> 16) - amt;
+            const G = (num >> 8 & 0x00FF) - amt;
+            const B = (num & 0x0000FF) - amt;
+            
+            return "#" + (
+                0x1000000 +
+                (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+                (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+                (B < 255 ? B < 1 ? 0 : B : 255)
+            ).toString(16).slice(1);
+        }
+        
+        function renderGame() {
+            updateNOValues();
+            renderSkills();
+            renderCombatSkills();
+            updateStateButtons();
+        }
+        
+        function updateNOValues() {
+            document.getElementById('strength-no').textContent = `NO: ${20 - characterData.attributes.strength}`;
+            document.getElementById('heart-no').textContent = `NO: ${20 - characterData.attributes.heart}`;
+            document.getElementById('mind-no').textContent = `NO: ${20 - characterData.attributes.mind}`;
+        }
+        
+        function renderSkills() {
+            const strengthList = document.getElementById('strength-skills');
+            strengthList.innerHTML = '';
+            
+            skills.strength.forEach(skill => {
+                const skillBtn = createSkillButton(skill, 'strength');
+                strengthList.appendChild(skillBtn);
+            });
+            
+            const heartList = document.getElementById('heart-skills');
+            heartList.innerHTML = '';
+            
+            skills.heart.forEach(skill => {
+                const skillBtn = createSkillButton(skill, 'heart');
+                heartList.appendChild(skillBtn);
+            });
+            
+            const mindList = document.getElementById('mind-skills');
+            mindList.innerHTML = '';
+            
+            skills.mind.forEach(skill => {
+                const skillBtn = createSkillButton(skill, 'mind');
+                mindList.appendChild(skillBtn);
+            });
+        }
+        
+        function createSkillButton(skill, attribute) {
+            const button = document.createElement('button');
+            button.className = 'skill-btn';
+            
+            button.innerHTML = `
+                <div class="skill-name ${skill.favored ? 'skill-favored' : ''}">
+                    ${skill.favored ? '<span class="favored-icon">★</span>' : ''}
+                    <span>${skill.name}</span>
+                </div>
+                <div class="skill-rank">${skill.rank}</div>
+            `;
+            
+            button.dataset.skill = skill.name;
+            button.dataset.attribute = attribute;
+            button.dataset.type = 'skill';
+            button.dataset.rank = skill.rank;
+            button.dataset.favored = skill.favored;
+            
+            return button;
+        }
+        
+        function renderCombatSkills() {
+            const combatList = document.getElementById('combat-skills');
+            combatList.innerHTML = '';
+            
+            combatSkills.forEach(skill => {
+                const skillBtn = document.createElement('button');
+                skillBtn.className = 'skill-btn';
+                skillBtn.style.marginBottom = '8px';
+                
+                skillBtn.innerHTML = `
+                    <div class="skill-name ${skill.favored ? 'skill-favored' : ''}">
+                        ${skill.favored ? '<span class="favored-icon">★</span>' : ''}
+                        <span>${skill.name}</span>
+                    </div>
+                    <div class="skill-rank">${skill.rank}</div>
+                `;
+                
+                skillBtn.dataset.skill = skill.name;
+                skillBtn.dataset.attribute = 'strength';
+                skillBtn.dataset.type = 'combat';
+                skillBtn.dataset.rank = skill.rank;
+                skillBtn.dataset.favored = skill.favored;
+                
+                combatList.appendChild(skillBtn);
+            });
+        }
+        
+        function updateStateButtons() {
+            const wearyBtn = document.getElementById('weary-btn');
+            const miserableBtn = document.getElementById('miserable-btn');
+            const advantageBtn = document.getElementById('advantage-btn');
+            const disadvantageBtn = document.getElementById('disadvantage-btn');
+            
+            wearyBtn.classList.toggle('active', characterData.states.weary);
+            miserableBtn.classList.toggle('active', characterData.states.miserable);
+            advantageBtn.classList.toggle('active', characterData.rollModifiers.advantage);
+            disadvantageBtn.classList.toggle('active', characterData.rollModifiers.disadvantage);
+            
+            if (characterData.rollModifiers.advantage && characterData.rollModifiers.disadvantage) {
+                characterData.rollModifiers.disadvantage = false;
+                disadvantageBtn.classList.remove('active');
+            }
+        }
+        
+        function setupEventListeners() {
+            document.getElementById('combat-btn').addEventListener('click', function() {
+                const panel = document.getElementById('combat-panel');
+                panel.classList.toggle('active');
+                
+                if (panel.classList.contains('active')) {
+                    setTimeout(() => {
+                        document.addEventListener('click', closeCombatPanelOutside);
+                    }, 10);
+                } else {
+                    document.removeEventListener('click', closeCombatPanelOutside);
+                }
+            });
+            
+            function closeCombatPanelOutside(e) {
+                if (!e.target.closest('.combat-panel') && !e.target.closest('#combat-btn')) {
+                    document.getElementById('combat-panel').classList.remove('active');
+                    document.removeEventListener('click', closeCombatPanelOutside);
+                }
+            }
+            
+            document.getElementById('weary-btn').addEventListener('click', function() {
+                characterData.states.weary = !characterData.states.weary;
+                updateStateButtons();
+                saveToLocalStorage();
+            });
+            
+            document.getElementById('miserable-btn').addEventListener('click', function() {
+                characterData.states.miserable = !characterData.states.miserable;
+                updateStateButtons();
+                saveToLocalStorage();
+            });
+            
+            document.getElementById('advantage-btn').addEventListener('click', function() {
+                characterData.rollModifiers.advantage = !characterData.rollModifiers.advantage;
+                if (characterData.rollModifiers.advantage) {
+                    characterData.rollModifiers.disadvantage = false;
+                }
+                updateStateButtons();
+                saveToLocalStorage();
+            });
+            
+            document.getElementById('disadvantage-btn').addEventListener('click', function() {
+                characterData.rollModifiers.disadvantage = !characterData.rollModifiers.disadvantage;
+                if (characterData.rollModifiers.disadvantage) {
+                    characterData.rollModifiers.advantage = false;
+                }
+                updateStateButtons();
+                saveToLocalStorage();
+            });
+            
+            document.getElementById('hope-btn').addEventListener('click', function() {
+                characterData.rollModifiers.extraHopeDice += 1;
+                
+                this.classList.add('active');
+                setTimeout(() => {
+                    this.classList.remove('active');
+                }, 500);
+                
+                saveToLocalStorage();
+                
+                const originalText = this.textContent;
+                this.textContent = "¡+1🎲!";
+                setTimeout(() => {
+                    this.textContent = originalText;
+                }, 800);
+            });
+            
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.skill-btn') && !document.getElementById('roll-screen').classList.contains('active')) {
+                    const btn = e.target.closest('.skill-btn');
+                    const skill = btn.dataset.skill;
+                    const attribute = btn.dataset.attribute;
+                    const type = btn.dataset.type;
+                    const rank = parseInt(btn.dataset.rank) || 0;
+                    const favored = btn.dataset.favored === 'true';
+                    
+                    document.getElementById('combat-panel').classList.remove('active');
+                    
+                    prepareRoll(skill, attribute, type, rank, favored);
+                    return;
+                }
+            });
+            
+            document.getElementById('close-roll').addEventListener('click', closeRollScreen);
+            document.getElementById('back-from-roll').addEventListener('click', closeRollScreen);
+            
+            document.getElementById('roll-screen-backdrop').addEventListener('click', closeRollScreen);
+            
+            document.getElementById('reroll-btn').addEventListener('click', function() {
+                if (currentRoll.skill) {
+                    executeRoll();
+                }
+            });
+            
+            document.getElementById('editor-btn').addEventListener('click', function() {
+                renderEditor();
+                document.getElementById('editor-screen').classList.add('active');
+            });
+            
+            document.getElementById('close-editor').addEventListener('click', function() {
+                document.getElementById('editor-screen').classList.remove('active');
+            });
+        }
+        
+        function prepareRoll(skill, attribute, type, rank, favored) {
+            stopAllRollAnimations();
+            
+            const extraDice = characterData.rollModifiers.extraHopeDice;
+            
+            currentRoll = {
+                skill: skill,
+                attribute: attribute,
+                type: type,
+                rank: rank,
+                favored: favored,
+                extraDice: extraDice
+            };
+            
+            characterData.rollModifiers.extraHopeDice = 0;
+            
+            const rollScreen = document.getElementById('roll-screen');
+            const resultVerdict = document.getElementById('result-verdict');
+            
+            rollScreen.classList.remove('elfic-background', 'gandalf-background', 'custom-background');
+            resultVerdict.classList.remove('visible', 'result-success', 'result-failure');
+            resultVerdict.textContent = '';
+            
+            rollScreen.classList.add('active');
+            document.getElementById('roll-skill-name').textContent = skill;
+            document.getElementById('roll-summary').textContent = '';
+            document.getElementById('roll-details').textContent = '';
+            document.getElementById('roll-summary').textContent = 'Tirando...';
+            
+            setTimeout(() => {
+                executeRoll();
+            }, 100);
+        }
+        
+        function stopAllRollAnimations() {
+            rollAnimationIntervals.forEach(interval => {
+                clearInterval(interval);
+            });
+            rollAnimationIntervals = [];
+        }
+        
+        function executeRoll() {
+            const targetNumber = 20 - characterData.attributes[currentRoll.attribute];
+            
+            const isSpecialCase = characterData.rollModifiers.disadvantage && currentRoll.favored;
+            
+            let proezaRolls = [];
+            let proezaCount = 1;
+            
+            if (!isSpecialCase) {
+                proezaCount = currentRoll.favored ? 2 : 1;
+                
+                if (characterData.rollModifiers.advantage && !currentRoll.favored) {
+                    proezaCount += 1;
+                } else if (characterData.rollModifiers.disadvantage && !currentRoll.favored) {
+                    proezaCount += 1;
+                }
+            }
+            
+            for (let i = 0; i < proezaCount; i++) {
+                proezaRolls.push(rollProezaDie());
+            }
+            
+            let proezaResult;
+            if (isSpecialCase) {
+                proezaResult = proezaRolls[0];
+            } else if (currentRoll.favored || characterData.rollModifiers.advantage) {
+                proezaResult = proezaRolls.reduce((best, current) => {
+                    if (current.value === 12) return current;
+                    if (best.value === 12) return best;
+                    
+                    if (current.value === 11) return best;
+                    if (best.value === 11) return current;
+                    
+                    return current.value > best.value ? current : best;
+                });
+            } else if (characterData.rollModifiers.disadvantage) {
+                proezaResult = proezaRolls.reduce((worst, current) => {
+                    if (current.value === 11) return current;
+                    if (worst.value === 11) return worst;
+                    
+                    if (current.value === 12) return worst;
+                    if (worst.value === 12) return current;
+                    
+                    return current.value < worst.value ? current : worst;
+                });
+            } else {
+                proezaResult = proezaRolls[0];
+            }
+            
+            let exitoRolls = [];
+            const exitoCount = currentRoll.rank + currentRoll.extraDice;
+            
+            for (let i = 0; i < exitoCount; i++) {
+                exitoRolls.push(rollExitoDie());
+            }
+            
+            if (characterData.states.weary) {
+                exitoRolls.forEach(roll => {
+                    if (roll.value <= 3) {
+                        roll.value = 0;
+                        roll.wearyZero = true;
+                    }
+                });
+            }
+            
+            let proezaValue = 0;
+            let exitoSum = 0;
+            
+            if (proezaResult.value === 11) {
+                if (characterData.states.miserable) {
+                    proezaValue = -Infinity;
+                } else {
+                    proezaValue = 0;
+                }
+            } else {
+                proezaValue = proezaResult.value;
+            }
+            
+            exitoRolls.forEach(roll => {
+                exitoSum += roll.value;
+            });
+            
+            const total = (proezaValue === -Infinity) ? -Infinity : proezaValue + exitoSum;
+            
+            let isSuccess = false;
+            let isGandalf = proezaResult.value === 12;
+            let isSauron = proezaResult.value === 11;
+            
+            if (isSauron && characterData.states.miserable) {
+                isSuccess = false;
+            } else if (isGandalf) {
+                isSuccess = true;
+            } else {
+                isSuccess = total >= targetNumber;
+            }
+            
+            const elficSymbols = exitoRolls.filter(roll => roll.value === 6).length;
+            
+            displayRollResultsWithAnimations(proezaResult, proezaRolls, exitoRolls, proezaValue, exitoSum, total, targetNumber, 
+                                           isSuccess, isGandalf, isSauron, elficSymbols, isSpecialCase);
+            
+            characterData.rollModifiers.advantage = false;
+            characterData.rollModifiers.disadvantage = false;
+            updateStateButtons();
+            saveToLocalStorage();
+        }
+        
+        function rollProezaDie() {
+            const value = Math.floor(Math.random() * 12) + 1;
+            
+            return {
+                value: value,
+                isGandalf: value === 12,
+                isSauron: value === 11
+            };
+        }
+        
+        function rollExitoDie() {
+            const value = Math.floor(Math.random() * 6) + 1;
+            
+            return {
+                value: value,
+                isElfic: value === 6
+            };
+        }
+        
+        function getRandomProezaNumber() {
+            const roll = Math.floor(Math.random() * 12) + 1;
+            if (roll === 12) return 'ᚠ';
+            if (roll === 11) return '👁️';
+            return roll;
+        }
+        
+        function getRandomExitoNumber() {
+            const roll = Math.floor(Math.random() * 6) + 1;
+            return roll;
+        }
+        
+        function displayRollResultsWithAnimations(proezaResult, proezaRolls, exitoRolls, proezaValue, exitoSum, total, targetNumber, 
+                                                isSuccess, isGandalf, isSauron, elficSymbols, isSpecialCase = false) {
+            const resultVerdict = document.getElementById('result-verdict');
+            const rollSummary = document.getElementById('roll-summary');
+            const diceContainer = document.getElementById('dice-container-minimal');
+            const rollDetails = document.getElementById('roll-details');
+            const rollScreen = document.getElementById('roll-screen');
+            
+            diceContainer.innerHTML = '';
+            
+            rollScreen.classList.remove('elfic-background', 'gandalf-background', 'custom-background');
+            
+            proezaRolls.forEach((roll, index) => {
+                const dice = document.createElement('div');
+                dice.className = `proeza-dice-animated rolling ${roll.isGandalf ? 'gandalf' : ''} ${roll.isSauron ? 'sauron' : ''}`;
+                
+                if (!roll.isGandalf && !roll.isSauron) {
+                    dice.style.background = `linear-gradient(135deg, ${characterData.diceColor} 0%, ${darkenColor(characterData.diceColor, 20)} 100%)`;
+                }
+                
+                const randomNumberEl = document.createElement('div');
+                randomNumberEl.className = 'random-number';
+                dice.appendChild(randomNumberEl);
+                
+                const finalResultEl = document.createElement('div');
+                dice.appendChild(finalResultEl);
+                
+                diceContainer.appendChild(dice);
+                
+                let randomCount = 0;
+                const randomInterval = setInterval(() => {
+                    randomNumberEl.textContent = getRandomProezaNumber();
+                    randomCount++;
+                    
+                    if (randomCount >= 12) {
+                        clearInterval(randomInterval);
+                        
+                        setTimeout(() => {
+                            dice.classList.remove('rolling');
+                            randomNumberEl.style.display = 'none';
+                            
+                            if (roll.isGandalf) {
+                                finalResultEl.textContent = 'ᚠ';
+                                dice.title = 'Runa de Gandalf';
+                                dice.classList.add('gandalf');
+                            } else if (roll.isSauron) {
+                                finalResultEl.textContent = '👁️';
+                                dice.title = 'Ojo de Sauron';
+                                dice.classList.add('sauron');
+                            } else {
+                                finalResultEl.textContent = roll.value;
+                                dice.style.background = `linear-gradient(135deg, ${characterData.diceColor} 0%, ${darkenColor(characterData.diceColor, 20)} 100%)`;
+                            }
+                            
+                            if (roll === proezaResult && proezaRolls.length > 1) {
+                                dice.classList.add('selected');
+                            }
+                        }, 100);
+                    }
+                }, 80);
+                
+                rollAnimationIntervals.push(randomInterval);
+            });
+            
+            if (exitoRolls.length > 0) {
+                exitoRolls.forEach((roll, index) => {
+                    setTimeout(() => {
+                        const dice = document.createElement('div');
+                        dice.className = `exito-dice-animated rolling ${roll.isElfic ? 'elfic' : ''} ${roll.wearyZero ? 'zero' : ''}`;
+                        
+                        if (!roll.isElfic && !roll.wearyZero) {
+                            dice.style.background = `linear-gradient(135deg, ${characterData.diceColor} 0%, ${darkenColor(characterData.diceColor, 20)} 100%)`;
+                        }
+                        
+                        const randomNumberEl = document.createElement('div');
+                        randomNumberEl.className = 'random-number';
+                        dice.appendChild(randomNumberEl);
+                        
+                        const finalResultEl = document.createElement('div');
+                        dice.appendChild(finalResultEl);
+                        
+                        diceContainer.appendChild(dice);
+                        
+                        let randomCount = 0;
+                        const randomInterval = setInterval(() => {
+                            randomNumberEl.textContent = getRandomExitoNumber();
+                            randomCount++;
+                            
+                            if (randomCount >= 8) {
+                                clearInterval(randomInterval);
+                                
+                                setTimeout(() => {
+                                    dice.classList.remove('rolling');
+                                    randomNumberEl.style.display = 'none';
+                                    
+                                    finalResultEl.textContent = roll.wearyZero ? '0' : roll.value;
+                                    
+                                    if (roll.isElfic && roll.value === 6) {
+                                        const symbol = document.createElement('div');
+                                        symbol.className = 'elfic-symbol-minimal';
+                                        symbol.textContent = '𝕿';
+                                        symbol.title = 'Símbolo Élfico';
+                                        dice.appendChild(symbol);
+                                        dice.classList.add('elfic');
+                                    }
+                                }, 100);
+                            }
+                        }, 70);
+                        
+                        rollAnimationIntervals.push(randomInterval);
+                    }, (proezaRolls.length * 100) + (index * 150));
+                });
+            }
+            
+            const totalDelay = (proezaRolls.length * 100) + (exitoRolls.length * 150) + 1000;
+            
+            setTimeout(() => {
+                resultVerdict.classList.remove('visible', 'result-success', 'result-failure');
+                
+                resultVerdict.classList.add('visible');
+                if (isSuccess) {
+                    resultVerdict.classList.add('result-success');
+                } else {
+                    resultVerdict.classList.add('result-failure');
+                }
+                resultVerdict.textContent = isSuccess ? 'Éxito' : 'Fracaso';
+                
+                const isSimpleRoll = exitoRolls.length === 0;
+                
+                if (isGandalf) {
+                    rollScreen.classList.add('gandalf-background');
+                } else if (elficSymbols > 0 && isSuccess) {
+                    rollScreen.classList.add('elfic-background');
+                } else if (isSuccess) {
+                    rollScreen.classList.add('custom-background');
+                }
+                
+                rollSummary.innerHTML = '';
+                
+                if (isSauron && characterData.states.miserable) {
+                    rollSummary.innerHTML = `<span style="color: #ff4444;">👁️ Ojo de Sauron + Desanimado</span>`;
+                } else if (isGandalf) {
+                    rollSummary.innerHTML = `<span style="color: var(--color-dorado-gandalf);">ᚠ Runa de Gandalf</span>`;
+                } else if (isSauron) {
+                    if (exitoRolls.length === 0) {
+                        rollSummary.innerHTML = `Ojo de Sauron`;
+                    } else {
+                        rollSummary.innerHTML = `0 + ${exitoSum} = <span class="total-result">${exitoSum}</span> / NO: ${targetNumber}`;
+                    }
+                } else {
+                    if (isSpecialCase) {
+                        if (exitoRolls.length > 0) {
+                            rollSummary.innerHTML = `${proezaValue} + ${exitoSum} = <span class="total-result">${total}</span> / NO: ${targetNumber}`;
+                        } else {
+                            rollSummary.innerHTML = `${proezaValue} / NO: ${targetNumber}`;
+                        }
+                    }
+                    else if (isSimpleRoll) {
+                        rollSummary.innerHTML = `${proezaValue} / NO: ${targetNumber}`;
+                    } 
+                    else if (currentRoll.extraDice > 0) {
+                        const diceBase = currentRoll.rank;
+                        rollSummary.innerHTML = `${proezaValue} + ${exitoSum} (${diceBase}+${currentRoll.extraDice}d6) = <span class="total-result">${total}</span> / NO: ${targetNumber}`;
+                    } 
+                    else {
+                        rollSummary.innerHTML = `${proezaValue} + ${exitoSum} = <span class="total-result">${total}</span> / NO: ${targetNumber}`;
+                    }
+                }
+                
+                rollDetails.innerHTML = '';
+                
+                if (isSpecialCase) {
+                    const detail = document.createElement('div');
+                    detail.textContent = '⚠️ Desventaja + Favorecida = Tirada normal';
+                    detail.style.color = '#ff9900';
+                    rollDetails.appendChild(detail);
+                }
+                
+                if (currentRoll.extraDice > 0) {
+                    const detail = document.createElement('div');
+                    detail.textContent = `+${currentRoll.extraDice}d6 por Esperanza`;
+                    detail.style.color = '#9b59b6';
+                    rollDetails.appendChild(detail);
+                }
+                
+                if (elficSymbols > 0) {
+                    const detail = document.createElement('div');
+                    detail.textContent = `${elficSymbols} símbolo${elficSymbols > 1 ? 's' : ''} élfico${elficSymbols > 1 ? 's' : ''}`;
+                    detail.style.color = 'var(--color-dorado)';
+                    rollDetails.appendChild(detail);
+                }
+                
+                if (currentRoll.favored && !isSpecialCase) {
+                    const detail = document.createElement('div');
+                    detail.textContent = '★ Favorecida';
+                    detail.style.color = 'var(--color-dorado)';
+                    rollDetails.appendChild(detail);
+                }
+                
+                if (characterData.states.weary && exitoRolls.some(r => r.wearyZero)) {
+                    const detail = document.createElement('div');
+                    detail.textContent = '💤 Cansado aplicado';
+                    detail.style.color = '#aaa';
+                    rollDetails.appendChild(detail);
+                }
+                
+                if (isSimpleRoll && !isSpecialCase) {
+                    const detail = document.createElement('div');
+                    detail.textContent = '🎲 Tirada simple (solo proeza)';
+                    detail.style.color = '#aaa';
+                    rollDetails.appendChild(detail);
+                }
+                
+                setTimeout(() => {
+                    const rollScreen = document.getElementById('roll-screen');
+                    const rollContent = document.querySelector('.roll-content');
+                    
+                    if (rollContent.scrollHeight > rollScreen.clientHeight) {
+                        const scaleFactor = 0.95;
+                        
+                        if (scaleFactor < 1) {
+                            rollContent.style.transform = `scale(${scaleFactor})`;
+                            rollContent.style.transformOrigin = 'top center';
+                        }
+                    }
+                }, 100);
+                
+            }, totalDelay);
+        }
+        
+        function closeRollScreen() {
+            stopAllRollAnimations();
+            
+            const rollContent = document.querySelector('.roll-content');
+            const rollScreen = document.getElementById('roll-screen');
+            const resultVerdict = document.getElementById('result-verdict');
+            
+            if (rollContent) {
+                rollContent.style.transform = '';
+                rollContent.style.transformOrigin = '';
+            }
+            
+            rollScreen.classList.remove('elfic-background', 'gandalf-background', 'custom-background');
+            resultVerdict.classList.remove('visible', 'result-success', 'result-failure');
+            resultVerdict.textContent = '';
+            
+            document.getElementById('roll-screen').classList.remove('active');
+        }
+        
+        function renderEditor() {
+            const editorContent = document.getElementById('editor-content');
+            editorContent.innerHTML = '';
+            
+            let html = `
+                <div class="editor-section">
+                    <h3>Información del Personaje</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="edit-name">Nombre</label>
+                            <input type="text" id="edit-name" value="${characterData.name}" placeholder="Nombre del personaje" class="${isDefaultName ? 'default-name' : ''}">
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-culture">Cultura</label>
+                            <select id="edit-culture">
+                                <option value="elfos" ${characterData.culture === 'elfos' ? 'selected' : ''}>Elfos de Lindon</option>
+                                <option value="enanos" ${characterData.culture === 'enanos' ? 'selected' : ''}>Enanos del Pueblo de Durin</option>
+                                <option value="hobbits" ${characterData.culture === 'hobbits' ? 'selected' : ''}>Hobbits de la Comarca</option>
+                                <option value="bardo" ${characterData.culture === 'bardo' ? 'selected' : ''}>Hombres de Bardo</option>
+                                <option value="hombres" ${characterData.culture === 'hombres' ? 'selected' : ''}>Hombres de Bree</option>
+                                <option value="montaraces" ${characterData.culture === 'montaraces' ? 'selected' : ''}>Montaraces del Norte</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="edit-dice-color">Color de los Dados</label>
+                            <div class="color-picker-container">
+                                <input type="color" id="edit-dice-color" value="${characterData.diceColor}" class="color-picker">
+                                <span class="color-picker-value">${characterData.diceColor.toUpperCase()}</span>
+                            </div>
+                            <div class="color-picker-container" style="margin-top: 8px;">
+                                <span class="color-picker-label">Los dados D6 usarán el mismo color que los D12</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="editor-section">
+                    <h3>Atributos</h3>
+                    <div class="attribute-editor">
+                        <div class="attribute-box">
+                            <h4>Fuerza</h4>
+                            <div class="attribute-value">
+                                <div class="number-input-wrapper">
+                                    <button class="number-control-btn decrease" data-target="edit-strength">−</button>
+                                    <input type="number" id="edit-strength" min="1" max="10" value="${characterData.attributes.strength}" class="number-control-input">
+                                    <button class="number-control-btn increase" data-target="edit-strength">+</button>
+                                </div>
+                            </div>
+                            <div class="attribute-no-editor">NO: ${20 - characterData.attributes.strength}</div>
+                        </div>
+                        <div class="attribute-box">
+                            <h4>Corazón</h4>
+                            <div class="attribute-value">
+                                <div class="number-input-wrapper">
+                                    <button class="number-control-btn decrease" data-target="edit-heart">−</button>
+                                    <input type="number" id="edit-heart" min="1" max="10" value="${characterData.attributes.heart}" class="number-control-input">
+                                    <button class="number-control-btn increase" data-target="edit-heart">+</button>
+                                </div>
+                            </div>
+                            <div class="attribute-no-editor">NO: ${20 - characterData.attributes.heart}</div>
+                        </div>
+                        <div class="attribute-box">
+                            <h4>Mente</h4>
+                            <div class="attribute-value">
+                                <div class="number-input-wrapper">
+                                    <button class="number-control-btn decrease" data-target="edit-mind">−</button>
+                                    <input type="number" id="edit-mind" min="1" max="10" value="${characterData.attributes.mind}" class="number-control-input">
+                                    <button class="number-control-btn increase" data-target="edit-mind">+</button>
+                                </div>
+                            </div>
+                            <div class="attribute-no-editor">NO: ${20 - characterData.attributes.mind}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="editor-section">
+                    <h3>Habilidades</h3>
+                    <div class="skills-editor" id="skills-editor">
+            `;
+            
+            html += `<h4 style="grid-column: 1 / -1; color: var(--color-rojo); margin: 10px 0 6px;">Fuerza</h4>`;
+            skills.strength.forEach((skill, index) => {
+                html += `
+                    <div class="skill-editor-item">
+                        <div class="skill-editor-name">
+                            <button class="favored-toggle ${skill.favored ? 'active' : ''}" data-skill="strength-${index}">★</button>
+                            <span>${skill.name}</span>
+                        </div>
+                        <div class="skill-editor-value">
+                            <div class="number-input-wrapper">
+                                <button class="number-control-btn decrease" data-skill="strength-${index}">−</button>
+                                <input type="number" min="0" max="6" value="${skill.rank}" data-skill="strength-${index}" class="number-control-input">
+                                <button class="number-control-btn increase" data-skill="strength-${index}">+</button>
+                            </div>
+                            <span>rango</span>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += `<h4 style="grid-column: 1 / -1; color: var(--color-rojo); margin: 10px 0 6px;">Corazón</h4>`;
+            skills.heart.forEach((skill, index) => {
+                html += `
+                    <div class="skill-editor-item">
+                        <div class="skill-editor-name">
+                            <button class="favored-toggle ${skill.favored ? 'active' : ''}" data-skill="heart-${index}">★</button>
+                            <span>${skill.name}</span>
+                        </div>
+                        <div class="skill-editor-value">
+                            <div class="number-input-wrapper">
+                                <button class="number-control-btn decrease" data-skill="heart-${index}">−</button>
+                                <input type="number" min="0" max="6" value="${skill.rank}" data-skill="heart-${index}" class="number-control-input">
+                                <button class="number-control-btn increase" data-skill="heart-${index}">+</button>
+                            </div>
+                            <span>rango</span>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += `<h4 style="grid-column: 1 / -1; color: var(--color-rojo); margin: 10px 0 6px;">Mente</h4>`;
+            skills.mind.forEach((skill, index) => {
+                html += `
+                    <div class="skill-editor-item">
+                        <div class="skill-editor-name">
+                            <button class="favored-toggle ${skill.favored ? 'active' : ''}" data-skill="mind-${index}">★</button>
+                            <span>${skill.name}</span>
+                        </div>
+                        <div class="skill-editor-value">
+                            <div class="number-input-wrapper">
+                                <button class="number-control-btn decrease" data-skill="mind-${index}">−</button>
+                                <input type="number" min="0" max="6" value="${skill.rank}" data-skill="mind-${index}" class="number-control-input">
+                                <button class="number-control-btn increase" data-skill="mind-${index}">+</button>
+                            </div>
+                            <span>rango</span>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += `
+                    </div>
+                </div>
+                
+                <div class="editor-section">
+                    <h3>Competencias de Combate</h3>
+                    <div class="skills-editor" id="combat-editor">
+            `;
+            
+            combatSkills.forEach((skill, index) => {
+                html += `
+                    <div class="skill-editor-item">
+                        <div class="skill-editor-name">
+                            <button class="favored-toggle ${skill.favored ? 'active' : ''}" data-combat="${index}">★</button>
+                            <span>${skill.name}</span>
+                        </div>
+                        <div class="skill-editor-value">
+                            <div class="number-input-wrapper">
+                                <button class="number-control-btn decrease" data-combat="${index}">−</button>
+                                <input type="number" min="0" max="6" value="${skill.rank}" data-combat="${index}" class="number-control-input">
+                                <button class="number-control-btn increase" data-combat="${index}">+</button>
+                            </div>
+                            <span>rango</span>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += `
+                    </div>
+                </div>
+            `;
+            
+            editorContent.innerHTML = html;
+            
+            setupEditorListeners();
+        }
+        
+        function setupEditorListeners() {
+            document.querySelectorAll('.number-control-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const targetId = this.getAttribute('data-target');
+                    const isDecrease = this.textContent === '−';
+                    const isIncrease = this.textContent === '+';
+                    
+                    if (targetId && (targetId === 'edit-strength' || targetId === 'edit-heart' || targetId === 'edit-mind')) {
+                        const input = document.getElementById(targetId);
+                        let value = parseInt(input.value) || 5;
+                        
+                        if (isDecrease && value > 1) {
+                            value--;
+                        } else if (isIncrease && value < 10) {
+                            value++;
+                        }
+                        
+                        input.value = value;
+                        
+                        const no = 20 - value;
+                        const noElement = input.closest('.attribute-value').nextElementSibling;
+                        if (noElement && noElement.classList.contains('attribute-no-editor')) {
+                            noElement.textContent = `NO: ${no}`;
+                        }
+                    }
+                    
+                    else if (this.hasAttribute('data-skill')) {
+                        const skillId = this.getAttribute('data-skill');
+                        const [attribute, index] = skillId.split('-');
+                        const input = document.querySelector(`input[data-skill="${skillId}"]`);
+                        
+                        if (input) {
+                            let value = parseInt(input.value) || 0;
+                            
+                            if (isDecrease && value > 0) {
+                                value--;
+                            } else if (isIncrease && value < 6) {
+                                value++;
+                            }
+                            
+                            input.value = value;
+                        }
+                    }
+                    
+                    else if (this.hasAttribute('data-combat')) {
+                        const combatIndex = this.getAttribute('data-combat');
+                        const input = document.querySelector(`input[data-combat="${combatIndex}"]`);
+                        
+                        if (input) {
+                            let value = parseInt(input.value) || 0;
+                            
+                            if (isDecrease && value > 0) {
+                                value--;
+                            } else if (isIncrease && value < 6) {
+                                value++;
+                            }
+                            
+                            input.value = value;
+                        }
+                    }
+                });
+            });
+            
+            document.getElementById('edit-strength')?.addEventListener('input', function() {
+                const value = parseInt(this.value) || 5;
+                const no = 20 - value;
+                this.parentElement.nextElementSibling.textContent = `NO: ${no}`;
+            });
+            
+            document.getElementById('edit-heart')?.addEventListener('input', function() {
+                const value = parseInt(this.value) || 5;
+                const no = 20 - value;
+                this.parentElement.nextElementSibling.textContent = `NO: ${no}`;
+            });
+            
+            document.getElementById('edit-mind')?.addEventListener('input', function() {
+                const value = parseInt(this.value) || 5;
+                const no = 20 - value;
+                this.parentElement.nextElementSibling.textContent = `NO: ${no}`;
+            });
+            
+            document.querySelectorAll('.favored-toggle[data-skill]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                });
+            });
+            
+            document.querySelectorAll('.favored-toggle[data-combat]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                });
+            });
+            
+            const colorPicker = document.getElementById('edit-dice-color');
+            const colorValue = document.querySelector('.color-picker-value');
+            
+            if (colorPicker && colorValue) {
+                colorPicker.addEventListener('input', function() {
+                    const color = this.value.toUpperCase();
+                    colorValue.textContent = color;
+                    characterData.diceColor = color.toLowerCase();
+                    
+                    characterData.diceExitoColor = characterData.diceColor;
+                    document.documentElement.style.setProperty('--color-fondo-roll-personalizado', characterData.diceColor);
+                    
+                    applyDiceColors();
+                    
+                    this.blur();
+                });
+                
+                colorPicker.addEventListener('change', function() {
+                    const color = this.value.toUpperCase();
+                    colorValue.textContent = color;
+                    characterData.diceColor = color.toLowerCase();
+                    
+                    characterData.diceExitoColor = characterData.diceColor;
+                    document.documentElement.style.setProperty('--color-fondo-roll-personalizado', characterData.diceColor);
+                });
+            }
+            
+            const nameInput = document.getElementById('edit-name');
+            if (nameInput) {
+                if (isDefaultName) {
+                    nameInput.classList.add('default-name');
+                }
+                
+                nameInput.addEventListener('focus', function() {
+                    if (isDefaultName && this.value === "Nuevo Personaje") {
+                        this.value = "";
+                        this.classList.remove('default-name');
+                        isDefaultName = false;
+                    }
+                });
+                
+                nameInput.addEventListener('blur', function() {
+                    if (this.value.trim() === "") {
+                        this.value = "Nuevo Personaje";
+                        this.classList.add('default-name');
+                        isDefaultName = true;
+                    }
+                });
+            }
+            
+            document.getElementById('save-edit').addEventListener('click', saveEditorChanges);
+            
+            document.getElementById('cancel-edit').addEventListener('click', function() {
+                document.getElementById('editor-screen').classList.remove('active');
+                applyDiceColors();
+            });
+        }
+        
+        function saveEditorChanges() {
+            const nameInput = document.getElementById('edit-name');
+            characterData.name = nameInput.value.trim() || "Nuevo Personaje";
+            
+            if (characterData.name === "Nuevo Personaje") {
+                isDefaultName = true;
+            } else {
+                isDefaultName = false;
+            }
+            
+            characterData.culture = document.getElementById('edit-culture').value;
+            
+            characterData.attributes.strength = parseInt(document.getElementById('edit-strength').value) || 5;
+            characterData.attributes.heart = parseInt(document.getElementById('edit-heart').value) || 5;
+            characterData.attributes.mind = parseInt(document.getElementById('edit-mind').value) || 5;
+            
+            document.querySelectorAll('input[data-skill]').forEach(input => {
+                const [attribute, index] = input.dataset.skill.split('-');
+                const value = parseInt(input.value) || 0;
+                const favoredBtn = input.parentElement.parentElement.parentElement.querySelector('.favored-toggle');
+                const favored = favoredBtn ? favoredBtn.classList.contains('active') : false;
+                
+                if (attribute === 'strength') {
+                    skills.strength[index].rank = value;
+                    skills.strength[index].favored = favored;
+                } else if (attribute === 'heart') {
+                    skills.heart[index].rank = value;
+                    skills.heart[index].favored = favored;
+                } else if (attribute === 'mind') {
+                    skills.mind[index].rank = value;
+                    skills.mind[index].favored = favored;
+                }
+            });
+            
+            document.querySelectorAll('input[data-combat]').forEach(input => {
+                const index = parseInt(input.dataset.combat);
+                const value = parseInt(input.value) || 0;
+                const favoredBtn = input.parentElement.parentElement.parentElement.querySelector('.favored-toggle');
+                const favored = favoredBtn ? favoredBtn.classList.contains('active') : false;
+                
+                combatSkills[index].rank = value;
+                combatSkills[index].favored = favored;
+            });
+            
+            applyDiceColors();
+            
+            renderGame();
+            
+            saveToLocalStorage();
+            
+            document.getElementById('editor-screen').classList.remove('active');
+            
+            const saveBtn = document.getElementById('save-edit');
+            const originalText = saveBtn.textContent;
+            saveBtn.textContent = "✓ Guardado";
+            saveBtn.style.backgroundColor = "#2ecc71";
+            
+            setTimeout(() => {
+                saveBtn.textContent = originalText;
+                saveBtn.style.backgroundColor = "";
+            }, 1500);
+        }
+        
+        function saveToLocalStorage() {
+            const saveData = {
+                characterData: characterData,
+                skills: skills,
+                combatSkills: combatSkills,
+                isDefaultName: isDefaultName
+            };
+            localStorage.setItem('lau-mobile-character', JSON.stringify(saveData));
+        }
+        
+        function loadFromLocalStorage() {
+            const savedData = localStorage.getItem('lau-mobile-character');
+            
+            if (savedData) {
+                try {
+                    const parsedData = JSON.parse(savedData);
+                    
+                    if (parsedData.characterData) {
+                        characterData = { ...characterData, ...parsedData.characterData };
+                    }
+                    
+                    if (parsedData.skills) {
+                        skills.strength = parsedData.skills.strength || skills.strength;
+                        skills.heart = parsedData.skills.heart || skills.heart;
+                        skills.mind = parsedData.skills.mind || skills.mind;
+                    }
+                    
+                    if (parsedData.combatSkills) {
+                        combatSkills.forEach((skill, index) => {
+                            if (parsedData.combatSkills[index]) {
+                                skill.rank = parsedData.combatSkills[index].rank || 0;
+                                skill.favored = parsedData.combatSkills[index].favored || false;
+                            }
+                        });
+                    }
+                    
+                    if (parsedData.isDefaultName !== undefined) {
+                        isDefaultName = parsedData.isDefaultName;
+                    }
+                    
+                    if (!characterData.diceExitoColor) {
+                        characterData.diceExitoColor = characterData.diceColor;
+                    }
+                    
+                    document.documentElement.style.setProperty('--color-fondo-roll-personalizado', characterData.diceColor);
+                    
+                } catch (e) {
+                    console.error('Error al cargar datos guardados:', e);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
