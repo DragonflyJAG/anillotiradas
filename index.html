@@ -21,13 +21,13 @@
             --color-suave-rojo: #f4a4a4;
             --color-suave-gris: #b8b8b8;
             --color-suave-azul: #a4c8f4;
-            --color-dado-base: #309fa1;
-            --color-dado-exito: #309fa1;
+            --color-dado-base: #8b0000;
+            --color-dado-exito: #8b7355;
             
             --color-fondo-roll: #2a2323;
             --color-fondo-roll-elfico: #1a3a1a;
             --color-fondo-roll-gandalf: #8b6b0b;
-            --color-fondo-roll-personalizado: #309fa1;
+            --color-fondo-roll-personalizado: #8b0000;
         }
         
         * {
@@ -308,23 +308,22 @@
             transform: translateY(-1px);
         }
         
-        /* PANTALLA DE TIRADA - COLOR DE FONDO DINÁMICO */
+        /* PANTALLA DE TIRADA - DISEÑO OPTIMIZADO PARA MÓVIL */
         .roll-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: linear-gradient(135deg, var(--color-fondo-roll) 0%, #1a1a1a 100%);
+            background: var(--color-fondo-roll);
             z-index: 1000;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start;
-            padding: 15px;
+            justify-content: space-between;
+            padding: 0;
             display: none;
-            overflow-y: auto;
-            overflow-x: hidden;
+            overflow: hidden;
             transition: background 0.5s ease;
         }
         
@@ -333,161 +332,139 @@
         }
         
         .roll-screen.elfic-background {
-            background: linear-gradient(135deg, var(--color-fondo-roll-elfico) 0%, #0e2a0e 100%);
+            background: var(--color-fondo-roll-elfico);
         }
         
         .roll-screen.gandalf-background {
-            background: linear-gradient(135deg, var(--color-fondo-roll-gandalf) 0%, #5e4a0a 100%);
+            background: var(--color-fondo-roll-gandalf);
         }
         
         .roll-screen.custom-background {
-            background: linear-gradient(135deg, var(--color-fondo-roll-personalizado) 0%, #1f6b6d 100%);
+            background: var(--color-fondo-roll-personalizado);
         }
         
-        .roll-content {
+        /* CABECERA FIJA CON HABILIDAD Y RESULTADO */
+        .roll-header {
             width: 100%;
-            max-width: 500px;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+            padding: 12px 15px;
             display: flex;
-            flex-direction: column;
+            justify-content: space-between;
             align-items: center;
-            justify-content: flex-start;
-            gap: 5px;
-            margin: 0 auto;
-            flex: 1;
-            overflow-y: auto;
-            padding: 5px;
-        }
-        
-        .roll-result-main {
-            text-align: center;
-            width: 100%;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
             flex-shrink: 0;
-            min-height: 70px;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            margin-top: 0;
         }
         
         .roll-skill-name {
             font-size: 1.2rem;
-            color: var(--color-crema);
-            margin-bottom: 2px;
+            color: white;
             font-weight: bold;
-            word-wrap: break-word;
-            padding: 0 5px;
-            flex-shrink: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 60%;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
         }
         
-        /* RESULTADO ÉXITO/FRACASO - ESPACIO RESERVADO SIEMPRE */
-        .result-verdict {
-            font-size: 1.8rem;
+        .roll-verdict {
+            font-size: 1.2rem;
             font-weight: 900;
-            color: transparent;
-            text-shadow: none;
-            letter-spacing: 2px;
-            min-height: 45px;
+            padding: 5px 15px;
+            border-radius: 30px;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        
+        .roll-verdict.success {
+            color: var(--color-exito);
+            text-shadow: 0 0 10px rgba(46, 139, 87, 0.5);
+        }
+        
+        .roll-verdict.failure {
+            color: var(--color-fallo);
+            text-shadow: 0 0 10px rgba(139, 0, 0, 0.5);
+        }
+        
+        .roll-verdict.hidden {
+            opacity: 0.3;
+            color: #aaa;
+        }
+        
+        /* CONTENIDO CENTRAL - SCROLLABLE SI ES NECESARIO */
+        .roll-content {
+            flex: 1;
+            width: 100%;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            transition: color 0.3s ease, text-shadow 0.3s ease;
-            flex-shrink: 0;
-            line-height: 1;
-        }
-        
-        .result-verdict.visible {
-            color: white;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-            animation: pulseVerdict 0.8s ease-in-out;
-        }
-        
-        .result-success.visible {
-            color: var(--color-exito);
-        }
-        
-        .result-failure.visible {
-            color: var(--color-fallo);
-        }
-        
-        @keyframes pulseVerdict {
-            0% { opacity: 0.7; transform: scale(0.95); }
-            50% { opacity: 1; transform: scale(1.05); }
-            100% { opacity: 1; transform: scale(1); }
+            overflow-y: auto;
+            padding: 15px;
         }
         
         .roll-info-minimal {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            border-radius: 20px;
+            padding: 20px;
             width: 100%;
+            max-width: 500px;
             text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            flex-shrink: 0;
-            margin-bottom: 5px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin: auto;
         }
         
-        /* RESULTADO DE SUMA - SOLO EL RESULTADO TOTAL MÁS GRANDE */
+        /* RESULTADO DE SUMA */
         .roll-summary {
             font-size: 1.4rem;
             color: var(--color-crema);
-            margin-bottom: 8px;
+            margin-bottom: 15px;
             font-weight: bold;
-            min-height: 45px;
             display: flex;
             align-items: center;
             justify-content: center;
-            word-wrap: break-word;
+            flex-wrap: wrap;
             line-height: 1.3;
-            padding: 10px 5px;
+            padding: 5px;
         }
         
         .roll-summary .total-result {
-            font-size: 2.2rem;
+            font-size: 2.5rem;
             font-weight: 900;
-            margin: 0 5px;
+            margin: 0 8px;
             color: var(--color-dorado);
-            text-shadow: 0 0 10px rgba(218, 165, 32, 0.5);
+            text-shadow: 0 0 15px rgba(218, 165, 32, 0.7);
         }
         
-        .roll-details {
-            font-size: 0.8rem;
-            color: var(--color-dorado);
-            margin-top: 8px;
-            font-style: italic;
-            min-height: 18px;
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
-        }
-        
+        /* DADOS MÁS GRANDES */
         .dice-container-minimal {
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 12px;
-            margin: 10px 0;
+            gap: 15px;
+            margin: 15px 0;
             flex-wrap: wrap;
-            flex-shrink: 0;
         }
         
-        /* DADOS MÁS GRANDES */
         .proeza-dice-animated {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, var(--color-dado-base) 0%, #21797a 100%);
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(135deg, var(--color-dado-base) 0%, #a30000 100%);
             clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.2rem;
+            font-size: 2.5rem;
             font-weight: bold;
             color: white;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
             transition: all 0.3s ease;
             border: 2px solid rgba(255, 255, 255, 0.3);
             position: relative;
             overflow: hidden;
-            flex-shrink: 0;
         }
         
         .proeza-dice-animated.rolling {
@@ -496,9 +473,9 @@
         
         @keyframes rollPentagon {
             0% { transform: rotate(0deg) scale(1); }
-            25% { transform: rotate(90deg) scale(1.05); }
+            25% { transform: rotate(90deg) scale(1.1); }
             50% { transform: rotate(180deg) scale(1); }
-            75% { transform: rotate(270deg) scale(1.05); }
+            75% { transform: rotate(270deg) scale(1.1); }
             100% { transform: rotate(360deg) scale(1); }
         }
         
@@ -506,13 +483,13 @@
             background: linear-gradient(135deg, var(--color-dorado-gandalf) 0%, #8b6b0b 100%);
             color: var(--color-oscuro);
             border-color: rgba(184, 134, 11, 0.5);
-            box-shadow: 0 0 20px rgba(184, 134, 11, 0.8);
+            box-shadow: 0 0 25px rgba(184, 134, 11, 0.9);
             animation: glowGandalf 2s infinite alternate;
         }
         
         @keyframes glowGandalf {
             from { box-shadow: 0 0 15px rgba(184, 134, 11, 0.6); }
-            to { box-shadow: 0 0 30px rgba(184, 134, 11, 1); }
+            to { box-shadow: 0 0 35px rgba(184, 134, 11, 1); }
         }
         
         .proeza-dice-animated.sauron {
@@ -522,7 +499,7 @@
         }
         
         .proeza-dice-animated.selected {
-            box-shadow: 0 0 0 3px var(--color-dorado), 0 0 20px rgba(218, 165, 32, 0.8);
+            box-shadow: 0 0 0 3px var(--color-dorado), 0 0 25px rgba(218, 165, 32, 0.9);
         }
         
         .random-number {
@@ -532,7 +509,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.2rem;
+            font-size: 2.5rem;
             font-weight: bold;
             opacity: 0;
             animation: randomFlash 0.1s infinite alternate;
@@ -544,21 +521,20 @@
         }
         
         .exito-dice-animated {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, var(--color-dado-exito) 0%, #21797a 100%);
-            border-radius: 12px;
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--color-dado-exito) 0%, #7a6345 100%);
+            border-radius: 15px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.8rem;
+            font-size: 2rem;
             font-weight: bold;
             color: white;
             position: relative;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
             border: 2px solid rgba(255, 255, 255, 0.3);
             overflow: hidden;
-            flex-shrink: 0;
             transition: all 0.3s ease;
         }
         
@@ -578,7 +554,7 @@
             background: linear-gradient(135deg, var(--color-verde-elfico) 0%, #1d6b3a 100%);
             color: white;
             border-color: var(--color-dorado);
-            box-shadow: 0 0 15px rgba(46, 139, 86, 0.7);
+            box-shadow: 0 0 20px rgba(46, 139, 86, 0.8);
         }
         
         .exito-dice-animated.zero {
@@ -588,39 +564,56 @@
         
         .elfic-symbol-minimal {
             position: absolute;
-            top: 4px;
-            right: 4px;
-            font-size: 0.8rem;
+            top: 5px;
+            right: 5px;
+            font-size: 0.9rem;
             color: var(--color-dorado);
             font-weight: bold;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
         }
         
-        .action-buttons-minimal {
+        .roll-details {
+            font-size: 0.9rem;
+            color: var(--color-dorado);
+            margin-top: 12px;
+            font-style: italic;
             display: flex;
-            gap: 8px;
-            margin-top: 5px;
-            flex-wrap: wrap;
-            justify-content: center;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        /* BARRA INFERIOR FIJA CON BOTONES */
+        .roll-footer {
             width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+            padding: 12px 15px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            border-top: 2px solid rgba(255, 255, 255, 0.1);
             flex-shrink: 0;
         }
         
         .action-btn-minimal {
-            padding: 8px 12px;
+            padding: 12px 25px;
             border: none;
-            border-radius: 8px;
+            border-radius: 50px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.2s;
-            font-size: 0.85rem;
-            min-width: 100px;
-            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+            font-size: 1rem;
+            min-width: 130px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
             flex: 1;
-            max-width: 140px;
+            max-width: 200px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         
         .action-btn-minimal:hover {
             transform: translateY(-2px);
+            filter: brightness(1.1);
         }
         
         .roll-again-btn {
@@ -635,114 +628,55 @@
         
         .close-roll-minimal {
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: 12px;
+            right: 15px;
             background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
             color: white;
             border: none;
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            font-size: 1.2rem;
+            width: 36px;
+            height: 36px;
+            font-size: 1.4rem;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: all 0.3s;
             z-index: 1100;
-            flex-shrink: 0;
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
         
         .close-roll-minimal:hover {
             background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
         }
         
         @media (orientation: landscape) {
-            .main-content {
-                height: calc(100vh - 48px);
-                padding-bottom: 48px;
+            .proeza-dice-animated {
+                width: 80px;
+                height: 80px;
+                font-size: 2.2rem;
             }
             
-            .shared-scroll-container {
-                max-height: 100%;
-            }
-            
-            .attribute-column {
-                padding: 4px;
-            }
-            
-            .skill-btn {
-                padding: 6px 4px;
-                font-size: 0.7rem;
-                border-radius: 4px;
-            }
-            
-            .skill-rank {
-                width: 20px;
-                height: 20px;
-                font-size: 0.7rem;
-            }
-            
-            .attribute-header {
-                padding: 4px;
-                font-size: 0.75rem;
-                margin-bottom: 4px;
-            }
-            
-            .attribute-no {
-                font-size: 0.7rem;
-                min-width: 45px;
-                padding: 1px 4px;
-            }
-            
-            .favored-icon {
-                font-size: 0.7rem;
-            }
-            
-            .floating-buttons {
-                padding: 4px 6px;
-                gap: 4px;
-                height: 48px;
-            }
-            
-            .floating-btn {
-                padding: 4px 6px;
-                font-size: 0.7rem;
-                gap: 2px;
-            }
-            
-            .roll-screen {
-                padding: 10px;
-            }
-            
-            .roll-content {
-                padding: 5px;
-            }
-            
-            .roll-skill-name {
-                font-size: 1.1rem;
-                margin-bottom: 2px;
-            }
-            
-            .result-verdict {
-                font-size: 1.6rem;
-                min-height: 40px;
-            }
-            
-            .roll-info-minimal {
-                padding: 10px;
-                margin-bottom: 5px;
-            }
-            
-            .roll-summary {
-                font-size: 1.2rem;
-                min-height: 40px;
+            .exito-dice-animated {
+                width: 60px;
+                height: 60px;
+                font-size: 1.8rem;
             }
             
             .roll-summary .total-result {
-                font-size: 2rem;
+                font-size: 2.2rem;
             }
             
+            .action-btn-minimal {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+                min-width: 110px;
+            }
+        }
+        
+        @media (max-height: 600px) {
             .proeza-dice-animated {
                 width: 70px;
                 height: 70px;
@@ -755,103 +689,17 @@
                 font-size: 1.6rem;
             }
             
-            .action-btn-minimal {
-                padding: 6px 10px;
-                min-width: 90px;
-                font-size: 0.8rem;
+            .roll-info-minimal {
+                padding: 15px;
+            }
+            
+            .roll-summary {
+                margin-bottom: 10px;
             }
             
             .dice-container-minimal {
                 gap: 10px;
-                margin: 8px 0;
-            }
-        }
-        
-        @media (max-height: 500px) {
-            .main-content {
-                padding-bottom: 48px;
-            }
-            
-            .attribute-column {
-                padding: 3px;
-            }
-            
-            .skill-btn {
-                padding: 5px 3px;
-                font-size: 0.65rem;
-            }
-            
-            .skill-rank {
-                width: 18px;
-                height: 18px;
-                font-size: 0.65rem;
-            }
-            
-            .attribute-header {
-                padding: 3px;
-                font-size: 0.7rem;
-                margin-bottom: 3px;
-            }
-            
-            .attribute-no {
-                font-size: 0.65rem;
-                min-width: 40px;
-            }
-            
-            .floating-buttons {
-                height: 42px;
-                padding: 4px 5px;
-            }
-            
-            .floating-btn {
-                padding: 3px 5px;
-                font-size: 0.65rem;
-            }
-            
-            .roll-content {
-                padding: 3px;
-                gap: 3px;
-            }
-            
-            .roll-skill-name {
-                font-size: 1rem;
-                margin-bottom: 2px;
-            }
-            
-            .result-verdict {
-                font-size: 1.4rem;
-                min-height: 35px;
-            }
-            
-            .roll-info-minimal {
-                padding: 8px;
-            }
-            
-            .roll-summary {
-                font-size: 1.1rem;
-                min-height: 35px;
-            }
-            
-            .roll-summary .total-result {
-                font-size: 1.8rem;
-            }
-            
-            .proeza-dice-animated {
-                width: 60px;
-                height: 60px;
-                font-size: 1.8rem;
-            }
-            
-            .exito-dice-animated {
-                width: 40px;
-                height: 40px;
-                font-size: 1.4rem;
-            }
-            
-            .action-btn-minimal {
-                padding: 5px 8px;
-                min-width: 80px;
-                font-size: 0.75rem;
+                margin: 10px 0;
             }
         }
         
@@ -864,7 +712,6 @@
             background: linear-gradient(135deg, var(--color-fondo) 0%, #e8dfc8 100%);
             z-index: 2000;
             padding: 15px;
-            padding-bottom: 80px;
             overflow-y: auto;
             display: none;
         }
@@ -906,10 +753,9 @@
             background: white;
             border-radius: 10px;
             padding: 15px;
-            padding-bottom: 70px;
             border: 2px solid var(--color-sepia);
             color: var(--color-oscuro);
-            max-height: calc(100vh - 120px);
+            max-height: 80vh;
             overflow-y: auto;
         }
         
@@ -1152,73 +998,54 @@
             font-size: 0.85rem;
         }
         
-        /* EDITOR ACTIONS - SIEMPRE VISIBLES EN LA PARTE INFERIOR */
         .editor-actions {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
             display: flex;
             justify-content: center;
             gap: 12px;
-            padding: 15px;
-            background: linear-gradient(to top, rgba(249, 245, 235, 0.95), rgba(249, 245, 235, 0.98));
-            border-top: 3px solid var(--color-dorado);
-            z-index: 2100;
-            box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.2);
+            margin-top: 20px;
         }
         
         .save-btn {
-            padding: 12px 30px;
+            padding: 10px 25px;
             background: linear-gradient(135deg, var(--color-verde-elfico) 0%, #1d6b3a 100%);
             color: white;
             border: none;
-            border-radius: 50px;
-            font-size: 1.1rem;
+            border-radius: 8px;
+            font-size: 1rem;
             font-weight: bold;
             cursor: pointer;
-            flex: 1;
-            max-width: 200px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
         
         .cancel-btn {
-            padding: 12px 30px;
+            padding: 10px 25px;
             background: linear-gradient(135deg, var(--color-sepia) 0%, #7a6345 100%);
             color: white;
             border: none;
-            border-radius: 50px;
-            font-size: 1.1rem;
+            border-radius: 8px;
+            font-size: 1rem;
             font-weight: bold;
             cursor: pointer;
-            flex: 1;
-            max-width: 200px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
         
         .shared-scroll-container::-webkit-scrollbar,
-        .editor-content::-webkit-scrollbar,
-        .roll-content::-webkit-scrollbar {
+        .editor-content::-webkit-scrollbar {
             width: 5px;
         }
         
         .shared-scroll-container::-webkit-scrollbar-track,
-        .editor-content::-webkit-scrollbar-track,
-        .roll-content::-webkit-scrollbar-track {
+        .editor-content::-webkit-scrollbar-track {
             background: rgba(139, 115, 85, 0.1);
             border-radius: 2px;
         }
         
         .shared-scroll-container::-webkit-scrollbar-thumb,
-        .editor-content::-webkit-scrollbar-thumb,
-        .roll-content::-webkit-scrollbar-thumb {
+        .editor-content::-webkit-scrollbar-thumb {
             background: var(--color-sepia);
             border-radius: 2px;
         }
         
         .shared-scroll-container,
-        .editor-content,
-        .roll-content {
+        .editor-content {
             scrollbar-width: thin;
             scrollbar-color: var(--color-sepia) rgba(139, 115, 85, 0.1);
         }
@@ -1231,15 +1058,6 @@
         
         input[type="number"] {
             -moz-appearance: textfield;
-        }
-        
-        .roll-screen-backdrop {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
         }
     </style>
 </head>
@@ -1313,26 +1131,29 @@
         </div>
     </div>
     
+    <!-- PANTALLA DE TIRADA REDISEÑADA -->
     <div class="roll-screen" id="roll-screen">
         <button class="close-roll-minimal" id="close-roll">×</button>
-        <div class="roll-screen-backdrop" id="roll-screen-backdrop"></div>
         
+        <!-- CABECERA FIJA con habilidad y resultado -->
+        <div class="roll-header">
+            <div class="roll-skill-name" id="roll-skill-name">Habilidad</div>
+            <div class="roll-verdict hidden" id="roll-verdict">---</div>
+        </div>
+        
+        <!-- CONTENIDO CENTRAL -->
         <div class="roll-content">
-            <div class="roll-result-main">
-                <div class="roll-skill-name" id="roll-skill-name">Habilidad</div>
-                <div class="result-verdict" id="result-verdict"></div>
-            </div>
-            
             <div class="roll-info-minimal">
                 <div class="roll-summary" id="roll-summary"></div>
                 <div class="dice-container-minimal" id="dice-container-minimal"></div>
                 <div class="roll-details" id="roll-details"></div>
             </div>
-            
-            <div class="action-buttons-minimal">
-                <button class="action-btn-minimal roll-again-btn" id="reroll-btn">Tirar Otra Vez</button>
-                <button class="action-btn-minimal back-btn-minimal" id="back-from-roll">Volver</button>
-            </div>
+        </div>
+        
+        <!-- BARRA INFERIOR FIJA con botones -->
+        <div class="roll-footer">
+            <button class="action-btn-minimal roll-again-btn" id="reroll-btn">Tirar Otra Vez</button>
+            <button class="action-btn-minimal back-btn-minimal" id="back-from-roll">Volver</button>
         </div>
     </div>
     
@@ -1343,11 +1164,6 @@
         </div>
         
         <div class="editor-content" id="editor-content">
-        </div>
-        
-        <div class="editor-actions">
-            <button class="cancel-btn" id="cancel-edit">Cancelar</button>
-            <button class="save-btn" id="save-edit">Guardar Cambios</button>
         </div>
     </div>
 
@@ -1406,8 +1222,8 @@
                 disadvantage: false,
                 extraHopeDice: 0
             },
-            diceColor: "#309fa1",
-            diceExitoColor: "#309fa1"
+            diceColor: "#8b0000",
+            diceExitoColor: "#8b7355"
         };
         
         let isDefaultName = true;
@@ -1654,8 +1470,6 @@
             document.getElementById('close-roll').addEventListener('click', closeRollScreen);
             document.getElementById('back-from-roll').addEventListener('click', closeRollScreen);
             
-            document.getElementById('roll-screen-backdrop').addEventListener('click', closeRollScreen);
-            
             document.getElementById('reroll-btn').addEventListener('click', function() {
                 if (currentRoll.skill) {
                     executeRoll();
@@ -1689,11 +1503,11 @@
             characterData.rollModifiers.extraHopeDice = 0;
             
             const rollScreen = document.getElementById('roll-screen');
-            const resultVerdict = document.getElementById('result-verdict');
+            const rollVerdict = document.getElementById('roll-verdict');
             
             rollScreen.classList.remove('elfic-background', 'gandalf-background', 'custom-background');
-            resultVerdict.classList.remove('visible', 'result-success', 'result-failure');
-            resultVerdict.textContent = '';
+            rollVerdict.className = 'roll-verdict hidden';
+            rollVerdict.textContent = '---';
             
             rollScreen.classList.add('active');
             document.getElementById('roll-skill-name').textContent = skill;
@@ -1853,7 +1667,7 @@
         
         function displayRollResultsWithAnimations(proezaResult, proezaRolls, exitoRolls, proezaValue, exitoSum, total, targetNumber, 
                                                 isSuccess, isGandalf, isSauron, elficSymbols, isSpecialCase = false) {
-            const resultVerdict = document.getElementById('result-verdict');
+            const rollVerdict = document.getElementById('roll-verdict');
             const rollSummary = document.getElementById('roll-summary');
             const diceContainer = document.getElementById('dice-container-minimal');
             const rollDetails = document.getElementById('roll-details');
@@ -1968,15 +1782,14 @@
             const totalDelay = (proezaRolls.length * 100) + (exitoRolls.length * 150) + 1000;
             
             setTimeout(() => {
-                resultVerdict.classList.remove('visible', 'result-success', 'result-failure');
-                
-                resultVerdict.classList.add('visible');
+                rollVerdict.className = 'roll-verdict';
+                rollVerdict.classList.remove('hidden');
                 if (isSuccess) {
-                    resultVerdict.classList.add('result-success');
+                    rollVerdict.classList.add('success');
                 } else {
-                    resultVerdict.classList.add('result-failure');
+                    rollVerdict.classList.add('failure');
                 }
-                resultVerdict.textContent = isSuccess ? 'Éxito' : 'Fracaso';
+                rollVerdict.textContent = isSuccess ? 'ÉXITO' : 'FRACASO';
                 
                 const isSimpleRoll = exitoRolls.length === 0;
                 
@@ -2064,38 +1877,18 @@
                     rollDetails.appendChild(detail);
                 }
                 
-                setTimeout(() => {
-                    const rollScreen = document.getElementById('roll-screen');
-                    const rollContent = document.querySelector('.roll-content');
-                    
-                    if (rollContent.scrollHeight > rollScreen.clientHeight) {
-                        const scaleFactor = 0.95;
-                        
-                        if (scaleFactor < 1) {
-                            rollContent.style.transform = `scale(${scaleFactor})`;
-                            rollContent.style.transformOrigin = 'top center';
-                        }
-                    }
-                }, 100);
-                
             }, totalDelay);
         }
         
         function closeRollScreen() {
             stopAllRollAnimations();
             
-            const rollContent = document.querySelector('.roll-content');
             const rollScreen = document.getElementById('roll-screen');
-            const resultVerdict = document.getElementById('result-verdict');
-            
-            if (rollContent) {
-                rollContent.style.transform = '';
-                rollContent.style.transformOrigin = '';
-            }
+            const rollVerdict = document.getElementById('roll-verdict');
             
             rollScreen.classList.remove('elfic-background', 'gandalf-background', 'custom-background');
-            resultVerdict.classList.remove('visible', 'result-success', 'result-failure');
-            resultVerdict.textContent = '';
+            rollVerdict.className = 'roll-verdict hidden';
+            rollVerdict.textContent = '---';
             
             document.getElementById('roll-screen').classList.remove('active');
         }
@@ -2272,6 +2065,11 @@
             
             html += `
                     </div>
+                </div>
+                
+                <div class="editor-actions">
+                    <button class="cancel-btn" id="cancel-edit">Cancelar</button>
+                    <button class="save-btn" id="save-edit">Guardar Cambios</button>
                 </div>
             `;
             
