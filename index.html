@@ -28,6 +28,7 @@
             --color-fondo-roll-elfico: #1a3a1a;
             --color-fondo-roll-gandalf: #8b6b0b;
             --color-fondo-roll-personalizado: #8b0000;
+            --color-fondo-roll-gandalf-elfico: #8b6b0b;
         }
         
         * {
@@ -343,17 +344,22 @@
             background: var(--color-fondo-roll-personalizado);
         }
         
-        /* CABECERA FIJA CON HABILIDAD Y RESULTADO */
+        .roll-screen.gandalf-elfic-background {
+            background: linear-gradient(135deg, var(--color-fondo-roll-gandalf) 0%, var(--color-fondo-roll-elfico) 100%);
+        }
+        
+        /* CABECERA FIJA CON HABILIDAD Y RESULTADO - SEPARADO DE LA X */
         .roll-header {
             width: 100%;
             background: rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(5px);
-            padding: 12px 15px;
+            padding: 12px 50px 12px 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 2px solid rgba(255, 255, 255, 0.1);
             flex-shrink: 0;
+            position: relative;
         }
         
         .roll-skill-name {
@@ -363,7 +369,7 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 60%;
+            max-width: 45%;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
         }
         
@@ -376,6 +382,8 @@
             backdrop-filter: blur(5px);
             transition: all 0.3s ease;
             white-space: nowrap;
+            max-width: 45%;
+            text-align: center;
         }
         
         .roll-verdict.success {
@@ -391,6 +399,35 @@
         .roll-verdict.hidden {
             opacity: 0.3;
             color: #aaa;
+        }
+        
+        /* X DE CERRAR - SEPARADA Y MÁS GRANDE */
+        .close-roll-minimal {
+            position: absolute;
+            top: 50%;
+            right: 15px;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 1.6rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 1100;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            line-height: 1;
+        }
+        
+        .close-roll-minimal:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-50%) scale(1.1);
         }
         
         /* CONTENIDO CENTRAL - SCROLLABLE SI ES NECESARIO */
@@ -624,32 +661,6 @@
         .back-btn-minimal {
             background: linear-gradient(135deg, var(--color-sepia) 0%, #7a6345 100%);
             color: white;
-        }
-        
-        .close-roll-minimal {
-            position: absolute;
-            top: 12px;
-            right: 15px;
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(5px);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 36px;
-            height: 36px;
-            font-size: 1.4rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            z-index: 1100;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-        
-        .close-roll-minimal:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: scale(1.1);
         }
         
         @media (orientation: landscape) {
@@ -1133,12 +1144,11 @@
     
     <!-- PANTALLA DE TIRADA REDISEÑADA -->
     <div class="roll-screen" id="roll-screen">
-        <button class="close-roll-minimal" id="close-roll">×</button>
-        
-        <!-- CABECERA FIJA con habilidad y resultado -->
+        <!-- CABECERA FIJA con habilidad y resultado - X separada -->
         <div class="roll-header">
             <div class="roll-skill-name" id="roll-skill-name">Habilidad</div>
             <div class="roll-verdict hidden" id="roll-verdict">---</div>
+            <button class="close-roll-minimal" id="close-roll">×</button>
         </div>
         
         <!-- CONTENIDO CENTRAL -->
@@ -1505,7 +1515,7 @@
             const rollScreen = document.getElementById('roll-screen');
             const rollVerdict = document.getElementById('roll-verdict');
             
-            rollScreen.classList.remove('elfic-background', 'gandalf-background', 'custom-background');
+            rollScreen.classList.remove('elfic-background', 'gandalf-background', 'custom-background', 'gandalf-elfic-background');
             rollVerdict.className = 'roll-verdict hidden';
             rollVerdict.textContent = '---';
             
@@ -1675,7 +1685,7 @@
             
             diceContainer.innerHTML = '';
             
-            rollScreen.classList.remove('elfic-background', 'gandalf-background', 'custom-background');
+            rollScreen.classList.remove('elfic-background', 'gandalf-background', 'custom-background', 'gandalf-elfic-background');
             
             proezaRolls.forEach((roll, index) => {
                 const dice = document.createElement('div');
@@ -1793,7 +1803,9 @@
                 
                 const isSimpleRoll = exitoRolls.length === 0;
                 
-                if (isGandalf) {
+                if (isGandalf && elficSymbols > 0) {
+                    rollScreen.classList.add('gandalf-elfic-background');
+                } else if (isGandalf) {
                     rollScreen.classList.add('gandalf-background');
                 } else if (elficSymbols > 0 && isSuccess) {
                     rollScreen.classList.add('elfic-background');
@@ -1886,7 +1898,7 @@
             const rollScreen = document.getElementById('roll-screen');
             const rollVerdict = document.getElementById('roll-verdict');
             
-            rollScreen.classList.remove('elfic-background', 'gandalf-background', 'custom-background');
+            rollScreen.classList.remove('elfic-background', 'gandalf-background', 'custom-background', 'gandalf-elfic-background');
             rollVerdict.className = 'roll-verdict hidden';
             rollVerdict.textContent = '---';
             
