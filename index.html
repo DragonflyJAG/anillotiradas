@@ -237,7 +237,7 @@
 
     .roll-details{font-size:.9rem;color:var(--color-dorado);margin-top:12px;font-style:italic;display:flex;flex-direction:column;gap:4px;}
 
-    /* ✅ BOTONERA INFERIOR (MÁS PEQUEÑA, MENOS REDONDA, EN UNA SOLA LÍNEA) */
+    /* ✅ BOTONERA INFERIOR: relanzar/volver más anchos; +/- dados compactos */
     .roll-footer{
       width:100%;
       background:rgba(0,0,0,.3);
@@ -248,26 +248,37 @@
       gap:8px;
       border-top:2px solid rgba(255,255,255,.1);
       flex-shrink:0;
-      flex-wrap:nowrap;              /* una sola línea */
-      overflow-x:auto;               /* por si algún móvil muy estrecho */
+      flex-wrap:nowrap;
+      overflow-x:auto;
       -webkit-overflow-scrolling:touch;
     }
     .action-btn-minimal{
-      padding:8px 10px;              /* más pequeño */
+      padding:8px 10px;
       border:none;
-      border-radius:10px;            /* menos redondeado */
+      border-radius:10px;
       font-weight:800;
       cursor:pointer;
       transition:all .2s;
-      font-size:.78rem;              /* más pequeño */
+      font-size:.78rem;
       min-width:0;
       box-shadow:0 2px 8px rgba(0,0,0,.28);
-      flex:1 1 0;
-      max-width:none;
-      text-transform:none;           /* menos “bloque” */
+      text-transform:none;
       letter-spacing:.2px;
-      white-space:nowrap;            /* no partir líneas */
+      white-space:nowrap;
     }
+
+    /* Botones grandes */
+    .action-btn-minimal.primary-wide{flex:2.2 1 0;}
+    .action-btn-minimal.secondary-wide{flex:1.6 1 0;}
+
+    /* Botones compactos de ajuste */
+    .action-btn-minimal.compact{
+      flex:0 0 auto;
+      padding:8px 8px;
+      min-width:52px;           /* ocupa poco */
+      font-size:.8rem;
+    }
+
     .action-btn-minimal:hover{transform:translateY(-1px);filter:brightness(1.08);}
 
     .roll-rerollall-btn{background:linear-gradient(135deg,#b65d1c 0%,#8a3f0c 100%);color:white;}
@@ -350,6 +361,7 @@
       .exito-dice-animated{width:60px;height:60px;font-size:1.8rem;}
       .roll-summary .total-result{font-size:2.2rem;}
       .action-btn-minimal{font-size:.76rem;padding:7px 9px;border-radius:9px;}
+      .action-btn-minimal.compact{min-width:48px;padding:7px 7px;}
       .save-btn,.cancel-btn{padding:10px 25px;font-size:.9rem;min-width:120px;}
     }
     @media (max-height: 600px){
@@ -360,6 +372,7 @@
       .dice-container-minimal{gap:10px;margin:10px 0;}
       .save-btn,.cancel-btn{padding:8px 20px;font-size:.9rem;}
       .action-btn-minimal{font-size:.74rem;padding:6px 8px;border-radius:8px;}
+      .action-btn-minimal.compact{min-width:44px;padding:6px 6px;}
     }
   </style>
 </head>
@@ -434,13 +447,14 @@
       </div>
     </div>
 
-    <!-- ✅ SIN "NUEVA TIRADA SIMPLE" -->
+    <!-- ✅ Ajuste solicitado: botones +/- con 🎲 y compactos; relanzar/volver más anchos -->
     <div class="roll-footer">
-      <button class="action-btn-minimal roll-rerollall-btn" id="reroll-all-btn">Relanzar todo</button>
-      <button class="action-btn-minimal back-btn-minimal" id="back-from-roll">Volver</button>
-      <button class="action-btn-minimal roll-adjust-btn" id="adjust-minus-btn">-1 dado</button>
-      <button class="action-btn-minimal roll-adjust-btn" id="adjust-plus1-btn">+1 dado</button>
-      <button class="action-btn-minimal roll-adjust-btn" id="adjust-plus2-btn">+2 dados</button>
+      <button class="action-btn-minimal roll-rerollall-btn primary-wide" id="reroll-all-btn">Relanzar todo</button>
+      <button class="action-btn-minimal back-btn-minimal secondary-wide" id="back-from-roll">Volver</button>
+
+      <button class="action-btn-minimal roll-adjust-btn compact" id="adjust-minus-btn" title="-1 🎲">-1 🎲</button>
+      <button class="action-btn-minimal roll-adjust-btn compact" id="adjust-plus1-btn" title="+1 🎲">+1 🎲</button>
+      <button class="action-btn-minimal roll-adjust-btn compact" id="adjust-plus2-btn" title="+2 🎲">+2 🎲</button>
     </div>
   </div>
 
@@ -507,7 +521,6 @@
 
     let currentRoll = {skill:null,attribute:null,type:null,rank:0,favored:false,extraDice:0};
 
-    // ✅ ahora también guarda ventaja/desventaja
     // lastRollConfig = { skill, attribute, type, rank, favored, extraDice, advantage, disadvantage }
     let lastRollConfig = null;
 
@@ -518,7 +531,7 @@
     let combatOutsideCaptureHandler = null;
     let historyOutsideCaptureHandler = null;
 
-    // Fix favorecer siempre: delegación dentro del editor
+    // Favorecer siempre: delegación dentro del editor
     document.addEventListener('click', function(e){
       const editorActive = document.getElementById('editor-screen')?.classList.contains('active');
       if(!editorActive) return;
@@ -871,11 +884,9 @@
       document.getElementById('close-roll').addEventListener('click', closeRollScreen);
       document.getElementById('back-from-roll').addEventListener('click', closeRollScreen);
 
-      // ✅ Relanzar todo: misma habilidad/rank/extras + recuerda ventaja/desventaja
       document.getElementById('reroll-all-btn').addEventListener('click', function(){
         if(!lastRollConfig?.skill) return;
 
-        // Restaurar ventaja/desventaja y refrescar botones (sin guardar todavía, se guarda al final)
         characterData.rollModifiers.advantage = !!lastRollConfig.advantage;
         characterData.rollModifiers.disadvantage = !!lastRollConfig.disadvantage;
         if(characterData.rollModifiers.advantage && characterData.rollModifiers.disadvantage){
@@ -973,7 +984,6 @@
     function getRandomExitoNumber(){ return Math.floor(Math.random()*6)+1; }
 
     function executeRoll(addToHistory=true){
-      // ✅ capturar ventaja/desventaja antes de que se reseteen
       const advAtRoll = !!characterData.rollModifiers.advantage;
       const disAtRoll = !!characterData.rollModifiers.disadvantage;
 
@@ -1029,7 +1039,6 @@
         rollSkill: currentRoll.skill
       };
 
-      // ✅ guardar configuración completa para "Relanzar todo"
       lastRollConfig = {
         skill: currentRoll.skill,
         attribute: currentRoll.attribute,
@@ -1043,7 +1052,6 @@
 
       displayRollResultsWithAnimations();
 
-      // reset adv/disadv como antes
       characterData.rollModifiers.advantage = false;
       characterData.rollModifiers.disadvantage = false;
       updateStateButtons();
@@ -1315,11 +1323,8 @@
         rollDetails.appendChild(detail);
       }
 
-      // mantener extraDice coherente (si has ajustado dados)
       const computedExtra = s.exitoRolls.length - s.baseRank;
-      if(lastRollConfig){
-        lastRollConfig.extraDice = computedExtra;
-      }
+      if(lastRollConfig) lastRollConfig.extraDice = computedExtra;
       currentRoll.extraDice = computedExtra;
       lastResultState.extraDice = computedExtra;
 
