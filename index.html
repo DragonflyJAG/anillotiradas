@@ -95,7 +95,7 @@
       padding-bottom:8px;font-size:1.1rem;
     }
 
-    /* Modificadores de escudos (aparece al abrir combate) */
+    /* ✅ MODIFICADORES DE ESCUDOS (aparece al abrir combate) */
     .combat-modifiers{
       position:absolute;
       left:50%;
@@ -194,39 +194,15 @@
     .roll-header{
       width:100%;background:rgba(0,0,0,.3);backdrop-filter:blur(5px);padding:12px 50px 12px 15px;
       display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid rgba(255,255,255,.1);
-      flex-shrink:0;position:relative;gap:10px;
-    }
-
-    /* ✅ Cabecera con nombre + stats */
-    .roll-skill-block{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      min-width:0;
-      max-width:58%;
+      flex-shrink:0;position:relative;
     }
     .roll-skill-name{
-      font-size:1.15rem;color:white;font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-      text-shadow:1px 1px 2px rgba(0,0,0,.5);
-      flex:1;min-width:0;
+      font-size:1.2rem;color:white;font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+      max-width:45%;text-shadow:1px 1px 2px rgba(0,0,0,.5);
     }
-    .roll-weapon-stats{
-      display:none;
-      font-size:.88rem;
-      font-weight:900;
-      padding:4px 10px;
-      border-radius:999px;
-      background:rgba(0,0,0,.35);
-      color:var(--color-dorado);
-      border:1px solid rgba(218,165,32,.35);
-      white-space:nowrap;
-      flex:0 0 auto;
-    }
-    .roll-weapon-stats.active{display:inline-flex;}
-
     .roll-verdict{
-      font-size:1.02rem;font-weight:900;padding:5px 15px;border-radius:18px;background:rgba(0,0,0,.3);
-      backdrop-filter:blur(5px);transition:all .3s ease;white-space:nowrap;max-width:42%;text-align:center;
+      font-size:1.05rem;font-weight:900;padding:5px 15px;border-radius:18px;background:rgba(0,0,0,.3);
+      backdrop-filter:blur(5px);transition:all .3s ease;white-space:nowrap;max-width:55%;text-align:center;
     }
     .roll-verdict.success{color:var(--color-exito);text-shadow:0 0 10px rgba(46,139,87,.5);}
     .roll-verdict.failure{color:var(--color-fallo);text-shadow:0 0 10px rgba(139,0,0,.5);}
@@ -295,37 +271,6 @@
 
     .roll-details{font-size:.9rem;color:var(--color-dorado);margin-top:12px;font-style:italic;display:flex;flex-direction:column;gap:4px;}
 
-    /* ✅ Acciones de combate (aparece encima del footer) */
-    .combat-actions-bar{
-      width:100%;
-      display:none;
-      padding:8px 10px;
-      border-top:1px solid rgba(255,255,255,.12);
-      background:rgba(0,0,0,.28);
-      backdrop-filter:blur(5px);
-      gap:8px;
-      align-items:center;
-      justify-content:center;
-      flex-wrap:wrap;
-    }
-    .combat-actions-bar.active{display:flex;}
-    .combat-action-btn{
-      border:none;
-      border-radius:10px;
-      padding:7px 10px;
-      font-size:.78rem;
-      font-weight:900;
-      cursor:pointer;
-      color:white;
-      background:linear-gradient(135deg,#3a2b2b 0%,#201717 100%);
-      border:1px solid rgba(255,255,255,.12);
-      box-shadow:0 2px 8px rgba(0,0,0,.28);
-      white-space:nowrap;
-      transition:transform .12s, filter .12s, opacity .12s;
-    }
-    .combat-action-btn:hover{transform:translateY(-1px);filter:brightness(1.08);}
-    .combat-action-btn:disabled{opacity:.45;cursor:not-allowed;transform:none;filter:none;}
-
     /* Botonera roll: compacta + wide */
     .roll-footer{
       width:100%;
@@ -363,7 +308,7 @@
     .back-btn-minimal{background:linear-gradient(135deg,var(--color-sepia) 0%,#7a6345 100%);color:white;}
     .roll-adjust-btn{background:linear-gradient(135deg,#1f2a2a 0%,#101616 100%);color:#fff;}
 
-    /* EDITOR */
+    /* EDITOR (sin cambios relevantes) */
     .editor-screen{
       position:fixed;top:0;left:0;width:100vw;height:100vh;background:linear-gradient(135deg,var(--color-fondo) 0%,#e8dfc8 100%);
       z-index:2000;display:none;flex-direction:column;overflow:hidden;
@@ -407,23 +352,21 @@
     .number-control-btn{
       background:var(--color-sepia);color:white;border:none;width:30px;height:30px;display:flex;align-items:center;justify-content:center;
       cursor:pointer;font-size:1.2rem;font-weight:bold;transition:background .2s;
-      user-select:none;
     }
     .number-control-btn:hover{background:var(--color-rojo);}
     .number-control-input{width:50px;text-align:center;padding:5px;border:none;font-size:.85rem;font-weight:bold;background:white;color:var(--color-oscuro);}
     .number-control-input:focus{outline:none;background:#f9f5eb;}
 
     .skills-editor{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:20px;}
-    .skill-editor-item{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:white;border-radius:6px;border:1px solid var(--color-sepia);gap:10px;}
-    .skill-editor-name{display:flex;align-items:center;gap:6px;font-weight:bold;font-size:.85rem;color:var(--color-oscuro);min-width:0;}
-    .skill-editor-name span{color:var(--color-oscuro);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:160px;}
+    .skill-editor-item{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:white;border-radius:6px;border:1px solid var(--color-sepia);}
+    .skill-editor-name{display:flex;align-items:center;gap:6px;font-weight:bold;font-size:.85rem;color:var(--color-oscuro);}
+    .skill-editor-name span{color:var(--color-oscuro);}
     .skill-editor-value{display:flex;align-items:center;gap:6px;color:var(--color-oscuro);}
-    .skill-editor-value span{color:var(--color-oscuro);font-weight:700;}
+    .skill-editor-value span{color:var(--color-oscuro);}
 
     .favored-toggle{
       background:none;border:2px solid var(--color-sepia);color:var(--color-sepia);width:24px;height:24px;border-radius:50%;
       cursor:pointer;font-size:.9rem;display:flex;align-items:center;justify-content:center;
-      user-select:none;
     }
     .favored-toggle.active{background-color:var(--color-dorado);color:var(--color-oscuro);border-color:var(--color-dorado);}
 
@@ -442,7 +385,6 @@
       .action-btn-minimal{font-size:.76rem;padding:7px 9px;border-radius:9px;}
       .action-btn-minimal.compact{min-width:48px;padding:7px 7px;}
       .save-btn,.cancel-btn{padding:10px 25px;font-size:.9rem;min-width:120px;}
-      .combat-action-btn{font-size:.74rem;padding:6px 9px;}
     }
     @media (max-height: 600px){
       .proeza-dice-animated{width:70px;height:70px;font-size:2rem;}
@@ -453,7 +395,6 @@
       .save-btn,.cancel-btn{padding:8px 20px;font-size:.9rem;}
       .action-btn-minimal{font-size:.74rem;padding:6px 8px;border-radius:8px;}
       .action-btn-minimal.compact{min-width:44px;padding:6px 6px;}
-      .combat-action-btn{font-size:.72rem;padding:6px 8px;}
     }
   </style>
 </head>
@@ -493,6 +434,7 @@
       <div id="combat-skills"></div>
     </div>
 
+    <!-- ✅ Botones de escudos (solo en modo combate) -->
     <div class="combat-modifiers" id="combat-modifiers">
       <button type="button" class="shield-btn" data-shield="1">+1🛡️</button>
       <button type="button" class="shield-btn" data-shield="2">+2🛡️</button>
@@ -521,10 +463,7 @@
   <!-- ROLL SCREEN -->
   <div class="roll-screen" id="roll-screen">
     <div class="roll-header">
-      <div class="roll-skill-block">
-        <div class="roll-skill-name" id="roll-skill-name">Habilidad</div>
-        <div class="roll-weapon-stats" id="roll-weapon-stats">Daño 0 · Herida 0</div>
-      </div>
+      <div class="roll-skill-name" id="roll-skill-name">Habilidad</div>
       <div class="roll-verdict hidden" id="roll-verdict">---</div>
       <button class="close-roll-minimal" id="close-roll">×</button>
     </div>
@@ -535,14 +474,6 @@
         <div class="dice-container-minimal" id="dice-container-minimal"></div>
         <div class="roll-details" id="roll-details"></div>
       </div>
-    </div>
-
-    <!-- ✅ Acciones de combate por 6s -->
-    <div class="combat-actions-bar" id="combat-actions-bar">
-      <button type="button" class="combat-action-btn" id="btn-impacto-fuerte">Impacto fuerte</button>
-      <button type="button" class="combat-action-btn" id="btn-defenderse">Defenderse</button>
-      <button type="button" class="combat-action-btn" id="btn-atravesar">Atravesar P.+1</button>
-      <button type="button" class="combat-action-btn" id="btn-golpe-escudo">Golpe de escudo</button>
     </div>
 
     <div class="roll-footer">
@@ -604,8 +535,6 @@
       {name:"Protección",rank:0,favored:false}
     ];
 
-    const WAR_WEAPONS = ["Hachas","Arcos","Lanzas","Espadas"];
-
     let characterData = {
       name:"Nuevo Personaje",
       culture:"hombres",
@@ -615,22 +544,18 @@
         advantage:false,
         disadvantage:false,
         extraHopeDice:0,
-        noBonus:0
+        noBonus:0  // ✅ dificultad extra para el NO de la siguiente tirada (escudos)
       },
       diceColor:"#8b0000",
-      diceExitoColor:"#8b7355",
-      warGear: {
-        Hachas:  { damage: 0, wound: 0 },
-        Arcos:   { damage: 0, wound: 0 },
-        Lanzas:  { damage: 0, wound: 0 },
-        Espadas: { damage: 0, wound: 0 }
-      }
+      diceExitoColor:"#8b7355"
     };
 
     let isDefaultName = true;
 
+    // currentRoll incluye noBonus
     let currentRoll = {skill:null,attribute:null,type:null,rank:0,favored:false,extraDice:0,noBonus:0};
 
+    // lastRollConfig incluye advantage/disadvantage y noBonus (para Relanzar todo)
     let lastRollConfig = null;
 
     let lastResultState = null;
@@ -815,7 +740,7 @@
       list.innerHTML = rollHistory.map(h=>{
         const verdictClass = h.success ? 'success' : 'failure';
         const verdictText = h.success ? 'ÉXITO' : 'FRACASO';
-        const totalText = (h.total === -Infinity) ? '—' : (h.total ?? '—');
+        const totalText = (h.total === -Infinity) ? '—' : h.total;
 
         return `
           <div class="history-item">
@@ -872,15 +797,16 @@
       });
     }
 
-    /* CIERRE PANELES SIN DISPARAR TIRADAS */
+    /* ✅ CIERRE PANELES SIN DISPARAR TIRADAS */
     function openCombatPanel(){
       const panel = document.getElementById('combat-panel');
       panel.classList.add('active');
-      document.getElementById('combat-modifiers').classList.add('active');
+      document.getElementById('combat-modifiers').classList.add('active'); // ✅ mostrar escudos
       closeHistoryPanel();
 
       if(combatOutsideCaptureHandler) return;
       combatOutsideCaptureHandler = function(e){
+        // ✅ NO cerrar si clico en panel, botón combate o en los botones de escudo
         if(
           !e.target.closest('.combat-panel') &&
           !e.target.closest('#combat-btn') &&
@@ -894,7 +820,7 @@
     }
     function closeCombatPanel(){
       document.getElementById('combat-panel').classList.remove('active');
-      document.getElementById('combat-modifiers').classList.remove('active');
+      document.getElementById('combat-modifiers').classList.remove('active'); // ✅ ocultar escudos
       if(combatOutsideCaptureHandler){
         document.removeEventListener('click', combatOutsideCaptureHandler, true);
         combatOutsideCaptureHandler = null;
@@ -935,83 +861,7 @@
     function addNoBonus(amount){
       characterData.rollModifiers.noBonus = (characterData.rollModifiers.noBonus || 0) + amount;
       saveToLocalStorage();
-    }
-
-    function setWeaponStatsVisible(show, damage=0, wound=0){
-      const el = document.getElementById('roll-weapon-stats');
-      if(!el) return;
-      if(show){
-        el.textContent = `Daño ${damage} · Herida ${wound}`;
-        el.classList.add('active');
-      }else{
-        el.classList.remove('active');
-        el.textContent = `Daño 0 · Herida 0`;
-      }
-    }
-
-    function hideCombatActionsBar(){
-      const bar = document.getElementById('combat-actions-bar');
-      if(bar) bar.classList.remove('active');
-      // reset buttons enabled
-      const ids = ['btn-impacto-fuerte','btn-defenderse','btn-atravesar','btn-golpe-escudo'];
-      ids.forEach(id=>{
-        const b = document.getElementById(id);
-        if(b){ b.disabled = false; }
-      });
-    }
-
-    function showCombatActionsBarForCurrentResult(){
-      const bar = document.getElementById('combat-actions-bar');
-      if(!bar) return;
-
-      const s = lastResultState;
-      const c = computeFromState();
-      if(!s || !c) { hideCombatActionsBar(); return; }
-
-      const isCombat = s.rollType === 'combat';
-      const weapon = s.rollSkill;
-      const anySix = c.elficSymbols > 0;
-      const success = c.isSuccess;
-
-      if(!(isCombat && success && anySix)){
-        hideCombatActionsBar();
-        return;
-      }
-
-      // Configuración por arma
-      const btnDef = document.getElementById('btn-defenderse');
-      const btnAtr = document.getElementById('btn-atravesar');
-
-      // Defenderse no sale con Arcos
-      if(btnDef) btnDef.style.display = (weapon === 'Arcos') ? 'none' : 'inline-flex';
-
-      // Atravesar no sale con Hachas
-      if(btnAtr) btnAtr.style.display = (weapon === 'Hachas') ? 'none' : 'inline-flex';
-
-      // Nombre de Atravesar
-      if(btnAtr){
-        let bonus = 1;
-        if(weapon === 'Espadas') bonus = 1;
-        else if(weapon === 'Arcos') bonus = 2;
-        else if(weapon === 'Lanzas') bonus = 3;
-        btnAtr.textContent = `Atravesar P.+${bonus}`;
-      }
-
-      bar.classList.add('active');
-    }
-
-    function getAtravBonusForWeapon(weapon){
-      if(weapon === 'Espadas') return 1;
-      if(weapon === 'Arcos') return 2;
-      if(weapon === 'Lanzas') return 3;
-      return 0;
-    }
-
-    function getDefendParryBonusForWeapon(weapon){
-      if(weapon === 'Hachas') return 1;
-      if(weapon === 'Espadas') return 2;
-      if(weapon === 'Lanzas') return 3;
-      return 0;
+      // feedback rápido: parpadeo del botón pulsado
     }
 
     function setupEventListeners(){
@@ -1029,6 +879,7 @@
         e.preventDefault(); toggleHistoryPanel();
       });
 
+      // ✅ Escudos: NO cerrar panel, solo sumar dificultad
       document.getElementById('combat-modifiers').addEventListener('click', function(e){
         const btn = e.target.closest('.shield-btn');
         if(!btn) return;
@@ -1104,6 +955,7 @@
         }
         updateStateButtons();
 
+        // ✅ Relanzar todo mantiene también noBonus de la última tirada
         prepareRoll({
           skill: lastRollConfig.skill,
           attribute: lastRollConfig.attribute,
@@ -1133,80 +985,6 @@
         applyDiceColors();
       });
       document.getElementById('save-edit').addEventListener('click', saveEditorChanges);
-
-      // ✅ Acciones de combate
-      document.getElementById('btn-impacto-fuerte').addEventListener('click', function(){
-        if(!lastResultState) return;
-        const c = computeFromState();
-        if(!c || !c.isSuccess || lastResultState.rollType !== 'combat') return;
-
-        // solo 1 vez
-        if(lastResultState.combatEffects?.impactoFuerteApplied) return;
-
-        const bonus = characterData.attributes.strength || 0;
-        lastResultState.combatEffects.damageBonus = (lastResultState.combatEffects.damageBonus || 0) + bonus;
-        lastResultState.combatEffects.impactoFuerteApplied = true;
-
-        renderCombatHeaderStatsFromState(c.isSuccess);
-        renderCombatDetailsExtras();
-        this.disabled = true;
-        saveToLocalStorage();
-      });
-
-      document.getElementById('btn-defenderse').addEventListener('click', function(){
-        if(!lastResultState) return;
-        const c = computeFromState();
-        if(!c || !c.isSuccess || lastResultState.rollType !== 'combat') return;
-        const w = lastResultState.rollSkill;
-        const bonus = getDefendParryBonusForWeapon(w);
-        alert(`Aumenta tu Parada en este combate (+${bonus}).`);
-      });
-
-      document.getElementById('btn-atravesar').addEventListener('click', function(){
-        if(!lastResultState) return;
-        const c = computeFromState();
-        if(!c || !c.isSuccess || lastResultState.rollType !== 'combat') return;
-        if(lastResultState.rollSkill === 'Hachas') return;
-
-        // solo 1 vez
-        if(lastResultState.combatEffects?.atravesarApplied) return;
-
-        const w = lastResultState.rollSkill;
-        const bonus = getAtravBonusForWeapon(w);
-        if(bonus <= 0) return;
-
-        // Modifica el dado base usado (proezaResult.value) sin afectar 11/12, cap 10
-        const pr = lastResultState.proezaResult;
-        if(pr.value !== 11 && pr.value !== 12){
-          const old = pr.value;
-          let nv = old + bonus;
-          if(nv > 10) nv = 10;
-          pr.value = nv;
-
-          lastResultState.combatEffects.atravesarBonus = bonus;
-          lastResultState.combatEffects.atravesarApplied = true;
-
-          // recalcular y re-render
-          renderFinalFromState(true);
-
-          // si se convirtió en 10, piercing puede activarse (ya lo calcula)
-          renderCombatHeaderStatsFromState(computeFromState()?.isSuccess);
-          renderCombatDetailsExtras();
-          this.disabled = true;
-          saveToLocalStorage();
-        }else{
-          // 11/12 no cambia, pero marcamos aplicado para evitar spam
-          lastResultState.combatEffects.atravesarApplied = true;
-          this.disabled = true;
-        }
-      });
-
-      document.getElementById('btn-golpe-escudo').addEventListener('click', function(){
-        if(!lastResultState) return;
-        const c = computeFromState();
-        if(!c || !c.isSuccess || lastResultState.rollType !== 'combat') return;
-        alert('Adversario penalizado, debe restar 1D el resto del asalto.');
-      });
     }
 
     function prepareRoll({skill, attribute, type, rank, favored, fixedExtraDice=null, fixedNoBonus=null, consumeMods=true}){
@@ -1240,10 +1018,6 @@
       document.getElementById('roll-summary').textContent = 'Tirando...';
       document.getElementById('roll-details').textContent = '';
       document.getElementById('dice-container-minimal').innerHTML = '';
-
-      // ocultar stats/acciones hasta final
-      setWeaponStatsVisible(false);
-      hideCombatActionsBar();
 
       lastResultState = null;
     }
@@ -1282,6 +1056,7 @@
       const advAtRoll = !!characterData.rollModifiers.advantage;
       const disAtRoll = !!characterData.rollModifiers.disadvantage;
 
+      // ✅ targetNumber base + dificultad por escudos
       const baseTarget = 20 - characterData.attributes[currentRoll.attribute];
       const targetNumber = baseTarget + (currentRoll.noBonus || 0);
 
@@ -1334,15 +1109,10 @@
         isSpecialCase,
         rollType: currentRoll.type,
         rollSkill: currentRoll.skill,
-        noBonus: currentRoll.noBonus || 0,
-        combatEffects: {
-          damageBonus: 0,
-          impactoFuerteApplied: false,
-          atravesarApplied: false,
-          atravesarBonus: 0
-        }
+        noBonus: currentRoll.noBonus || 0
       };
 
+      // ✅ guardar para Relanzar todo (incluye noBonus)
       lastRollConfig = {
         skill: currentRoll.skill,
         attribute: currentRoll.attribute,
@@ -1393,9 +1163,6 @@
       rollVerdict.className = 'roll-verdict hidden';
       rollVerdict.textContent = '---';
       rollSummary.textContent = 'Tirando...';
-
-      setWeaponStatsVisible(false);
-      hideCombatActionsBar();
 
       const { proezaRolls, proezaResult, exitoRolls } = lastResultState;
 
@@ -1528,26 +1295,6 @@
       return { proezaValue, exitoSum, total, isSuccess, isGandalf, isSauron, elficSymbols, piercing };
     }
 
-    function renderCombatHeaderStatsFromState(isSuccess){
-      // Solo combate y solo si éxito, y solo si es arma de guerra
-      const s = lastResultState;
-      if(!s) { setWeaponStatsVisible(false); return; }
-      if(!isSuccess || s.rollType !== 'combat' || !WAR_WEAPONS.includes(s.rollSkill)){
-        setWeaponStatsVisible(false);
-        return;
-      }
-      const gear = characterData.warGear?.[s.rollSkill] || {damage:0,wound:0};
-      const bonus = s.combatEffects?.damageBonus || 0;
-      setWeaponStatsVisible(true, (gear.damage || 0) + bonus, (gear.wound || 0));
-    }
-
-    function renderCombatDetailsExtras(){
-      // Añadimos líneas informativas en roll-details, sin borrar el resto (reconstruye al final)
-      // Para simplificar: forzamos un re-render final completo que ya incluye su contenido base,
-      // y aquí solo añade nuestras líneas extras de combate si procede.
-      renderFinalFromState(false);
-    }
-
     function renderFinalFromState(updateHistoryToo){
       const rollScreen = document.getElementById('roll-screen');
       const rollVerdict = document.getElementById('roll-verdict');
@@ -1576,9 +1323,6 @@
         rollVerdict.classList.add('failure');
         rollVerdict.textContent = 'FRACASO';
       }
-
-      // ✅ stats arma (solo combate, éxito)
-      renderCombatHeaderStatsFromState(isSuccess);
 
       rollSummary.innerHTML = '';
       const isSimple = s.exitoRolls.length === 0;
@@ -1662,23 +1406,6 @@
         rollDetails.appendChild(detail);
       }
 
-      // ✅ detalles de combate: Impacto fuerte / Atravesar
-      if(s.rollType === 'combat'){
-        if(s.combatEffects?.impactoFuerteApplied){
-          const d = document.createElement('div');
-          d.textContent = `💥 Impacto fuerte: +${characterData.attributes.strength || 0} al Daño`;
-          d.style.color = '#ffd28a';
-          rollDetails.appendChild(d);
-        }
-        if(s.combatEffects?.atravesarApplied && s.combatEffects?.atravesarBonus){
-          const d = document.createElement('div');
-          d.textContent = `➜ Atravesar: +${s.combatEffects.atravesarBonus} al dado de proeza (máx. 10)`;
-          d.style.color = '#cfe9ff';
-          rollDetails.appendChild(d);
-        }
-      }
-
-      // Ajuste de extraDice respecto baseRank para que coincida con añadidos/quitados
       const computedExtra = s.exitoRolls.length - s.baseRank;
       if(lastRollConfig) lastRollConfig.extraDice = computedExtra;
       currentRoll.extraDice = computedExtra;
@@ -1695,9 +1422,6 @@
           noBonus: s.noBonus || 0
         });
       }
-
-      // ✅ barra de acciones de combate
-      showCombatActionsBarForCurrentResult();
     }
 
     function createExitoDiceFinalElement(roll){
@@ -1738,12 +1462,26 @@
         for(let i=0;i<addCount;i++){
           const roll = applyWearyToD6(rollExitoDie());
           s.exitoRolls.push(roll);
-          diceContainer.appendChild(createExitoDiceFinalElement(roll));
+          const el = createExitoDiceFinalElement(roll);
+          diceContainer.appendChild(el);
         }
       }
 
-      // recomputar/verdict + historial + barra combate
-      renderFinalFromState(true);
+      renderFinalFromState(false);
+
+      const c = computeFromState();
+      if(c){
+        const proezaDisplay = (s.proezaResult.value === 12) ? 'ᚠ' : ((s.proezaResult.value === 11) ? '👁️' : String(s.proezaResult.value));
+        updateLatestHistory({
+          total: c.total,
+          success: c.isSuccess,
+          elficSymbols: c.elficSymbols,
+          piercing: c.piercing,
+          proezaDisplay,
+          noBonus: s.noBonus || 0
+        });
+      }
+
       saveToLocalStorage();
     }
 
@@ -1758,9 +1496,6 @@
       rollVerdict.textContent = '---';
 
       rollScreen.classList.remove('active');
-
-      setWeaponStatsVisible(false);
-      hideCombatActionsBar();
     }
 
     /* EDITOR */
@@ -1840,41 +1575,6 @@
               </div>
               <div class="attribute-no-editor">NO: ${20 - characterData.attributes.mind}</div>
             </div>
-          </div>
-        </div>
-
-        <!-- ✅ NUEVO: Equipo de guerra -->
-        <div class="editor-section">
-          <h3>Equipo de guerra</h3>
-          <div class="skills-editor">
-      `;
-
-      WAR_WEAPONS.forEach(w=>{
-        const g = characterData.warGear?.[w] || {damage:0,wound:0};
-        html += `
-          <div class="skill-editor-item">
-            <div class="skill-editor-name">
-              <span>${w}</span>
-            </div>
-            <div class="skill-editor-value">
-              <span>Daño</span>
-              <div class="number-input-wrapper">
-                <button type="button" class="number-control-btn decrease" data-gear="${w}-damage">−</button>
-                <input type="number" min="0" max="20" value="${g.damage ?? 0}" data-gear="${w}-damage" class="number-control-input">
-                <button type="button" class="number-control-btn increase" data-gear="${w}-damage">+</button>
-              </div>
-              <span>Herida</span>
-              <div class="number-input-wrapper">
-                <button type="button" class="number-control-btn decrease" data-gear="${w}-wound">−</button>
-                <input type="number" min="0" max="20" value="${g.wound ?? 0}" data-gear="${w}-wound" class="number-control-input">
-                <button type="button" class="number-control-btn increase" data-gear="${w}-wound">+</button>
-              </div>
-            </div>
-          </div>
-        `;
-      });
-
-      html += `
           </div>
         </div>
 
@@ -1988,7 +1688,6 @@
           const isDecrease = this.textContent === '−';
           const isIncrease = this.textContent === '+';
 
-          // Atributos
           if(targetId && (targetId === 'edit-strength' || targetId === 'edit-heart' || targetId === 'edit-mind')){
             const input = document.getElementById(targetId);
             let value = parseInt(input.value) || 5;
@@ -2001,9 +1700,7 @@
             if(noElement && noElement.classList.contains('attribute-no-editor')){
               noElement.textContent = `NO: ${no}`;
             }
-          }
-          // Habilidades
-          else if(this.hasAttribute('data-skill')){
+          }else if(this.hasAttribute('data-skill')){
             const skillId = this.getAttribute('data-skill');
             const input = document.querySelector(`input[data-skill="${skillId}"]`);
             if(input){
@@ -2012,27 +1709,13 @@
               else if(isIncrease && value < 6) value++;
               input.value = value;
             }
-          }
-          // Combate
-          else if(this.hasAttribute('data-combat')){
+          }else if(this.hasAttribute('data-combat')){
             const combatIndex = this.getAttribute('data-combat');
             const input = document.querySelector(`input[data-combat="${combatIndex}"]`);
             if(input){
               let value = parseInt(input.value) || 0;
               if(isDecrease && value > 0) value--;
               else if(isIncrease && value < 6) value++;
-              input.value = value;
-            }
-          }
-          // ✅ Equipo de guerra
-          else if(this.hasAttribute('data-gear')){
-            const gearKey = this.getAttribute('data-gear'); // "Hachas-damage" etc.
-            const input = document.querySelector(`input[data-gear="${gearKey}"]`);
-            if(input){
-              let value = parseInt(input.value) || 0;
-              const max = parseInt(input.max) || 20;
-              if(isDecrease && value > 0) value--;
-              else if(isIncrease && value < max) value++;
               input.value = value;
             }
           }
@@ -2106,16 +1789,6 @@
         combatSkills[index].favored = favored;
       });
 
-      // ✅ Equipo de guerra
-      if(!characterData.warGear) characterData.warGear = {};
-      WAR_WEAPONS.forEach(w=>{
-        const dInput = document.querySelector(`input[data-gear="${w}-damage"]`);
-        const wInput = document.querySelector(`input[data-gear="${w}-wound"]`);
-        const dmg = dInput ? (parseInt(dInput.value) || 0) : 0;
-        const wnd = wInput ? (parseInt(wInput.value) || 0) : 0;
-        characterData.warGear[w] = { damage: dmg, wound: wnd };
-      });
-
       applyDiceColors();
       renderGame();
       saveToLocalStorage();
@@ -2149,22 +1822,6 @@
           if(!characterData.rollModifiers) characterData.rollModifiers = { advantage:false, disadvantage:false, extraHopeDice:0, noBonus:0 };
           if(typeof characterData.rollModifiers.extraHopeDice !== 'number') characterData.rollModifiers.extraHopeDice = 0;
           if(typeof characterData.rollModifiers.noBonus !== 'number') characterData.rollModifiers.noBonus = 0;
-
-          // compat gear
-          if(!characterData.warGear) {
-            characterData.warGear = {
-              Hachas:{damage:0,wound:0},
-              Arcos:{damage:0,wound:0},
-              Lanzas:{damage:0,wound:0},
-              Espadas:{damage:0,wound:0}
-            };
-          } else {
-            WAR_WEAPONS.forEach(w=>{
-              if(!characterData.warGear[w]) characterData.warGear[w] = {damage:0,wound:0};
-              if(typeof characterData.warGear[w].damage !== 'number') characterData.warGear[w].damage = parseInt(characterData.warGear[w].damage)||0;
-              if(typeof characterData.warGear[w].wound !== 'number') characterData.warGear[w].wound = parseInt(characterData.warGear[w].wound)||0;
-            });
-          }
         }
 
         if(parsed.skills){
